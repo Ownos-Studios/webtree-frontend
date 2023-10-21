@@ -3,14 +3,16 @@
 
 import Image from "next/image";
 import { Inter, Familjen_Grotesk } from "next/font/google";
-import { User } from "./User";
+import { User } from "./home/User"
 
 import axios from "axios";
 import { useUserStore } from "@/store/user";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { BE_URL } from "../_app";
+import { BE_URL } from "./_app";
 import toast, { Toaster } from "react-hot-toast";
+
+import { useRouter } from "next/router";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,12 +22,21 @@ const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
 
 export default function Home() {
+
+    const router = useRouter()
   const { token, wallet } = useUserStore();
   const { address } = useAccount();
  const [userInfo, setUserInfo] = useState<any>({
   userData: false,
   proofs: false,
  });
+
+ useEffect(() => {
+    if(router.isReady){
+        fetchUserInfo({username: router.query.username as string})
+        }
+    }
+    , [router.isReady, router.query.username])
 
  const parseProofs = (proofs:any) => {
   switch(proofs?.type){
@@ -41,14 +52,18 @@ export default function Home() {
   }
  }
 
-  const fetchUserInfo = async() => {
+  const fetchUserInfo = async(
+    {
+        username
+    }: {
+        username: string
+    }
+  ) => {
     try{
-      const response = await axios.get(`${BE_URL}user/me`,{
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const response = await axios.get(`${BE_URL}user/fetch/${username}`,{
       })
 
+      console.log(response)
       const dataCheck = await parseProofs(response?.data?.data?.proofs[0])
 
       setUserInfo({
@@ -80,16 +95,9 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
-   
-    fetchUserInfo()
-
-    const interval = setInterval(() => {
-      fetchUserInfo()
-    }, 5000);
+ 
 
 
-  }, [token])
 
   const Links = () => {
     return (
@@ -100,7 +108,7 @@ export default function Home() {
         </span>
         <div className="flex flex-col gap-[12px] ">
           <Link 
-            name={userInfo?.proofs?.email || "Verify your email"}
+            name={userInfo?.proofs?.email || "Email not yet verified"}
             isVerified={userInfo?.proofs?.isVerified || false}
             timestamp={userInfo?.proofs?.timestamp || false}
           />
@@ -114,17 +122,7 @@ export default function Home() {
   const Link = (data:any) => {
     return (
       <button className="flex flex-col db-border items-center py-[12px]  w-full"
-        onClick={async() => {
-         
-        const url = data?.isVerified ? false : await GetVerificationLink()
-
-          if(url){
-            window?.innerWidth > 768 ? window.open(window.location + "/user/qr?code=" + url, "_blank") :
-            window.open(url,"_blank");
-          } else {
-            toast.success("You are already verified")
-          }
-        }}
+        onClick={() => {}}
       >
         <h1 className="flex items-center text-[18px] font-semibold">
           {/* <svg
@@ -173,7 +171,7 @@ export default function Home() {
         </svg>
         <User
           wallet={userInfo?.userData?.wallet || ""}
-          company={userInfo?.proofs?.company || "Verify your email"}
+          company={userInfo?.proofs?.company || "not verified"}
           name={userInfo?.userData?.username || false}
           email={userInfo?.proofs?.email || false}
           bio={userInfo?.userData?.bio || false}
