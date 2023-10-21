@@ -65,7 +65,7 @@ export default function Home() {
       })
 
       console.log(response)
-      const dataCheck = await parseProofs(response?.data?.data?.proofs[0])
+      const dataCheck = await parseProofs(response?.data?.data?.proofs?.find((proof:any) => proof?.isVerified))
 
       setUserInfo({
         userData: response?.data?.data?.user,
