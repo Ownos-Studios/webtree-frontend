@@ -71,7 +71,7 @@ const Login: React.FC<indexProps> = ({}) => {
             setToken(response.data?.data?.token)
             setFirtTimeLogin(response.data?.data?.firstTimeLogin)
             if(!response.data?.data?.firstTimeLogin && response.data?.data?.data?.username?.length > 0){
-                router.push(`/${response.data?.data?.data?.username}`)
+                router.push(`/`)
             } else {
                 router.push("/user/onboard")
             }
