@@ -14,6 +14,7 @@ const QrCode: React.FC<QRCodeProps> = ({}) => {
             const { code } = router.query;
             setQr(code as string)
         }
+      
     }, [router.isReady, router.query])
   
     
@@ -31,9 +32,16 @@ const QrCode: React.FC<QRCodeProps> = ({}) => {
 
          
             </div>
+            <div className='mx-auto text-center mt-12'>
+            <a href={qr}
+            className='text-blue-500 underline'
+            >
+                or click here to open the link
+            </a>
             <h1 className='text-lg text-center mt-12'>
                 You can close this window once you have scanned the qr
             </h1>
+            </div>
             </>
 
         );

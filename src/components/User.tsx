@@ -56,36 +56,20 @@ export const User = ({
             Company: {company}
           </h3>
           <h3 className="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="17"
-              fill="none"
-              viewBox="0 0 16 17"
-              className="mr-[8px]"
-            >
-              <g clipPath="url(#clip0_702_1336)">
-                <path
-                  fill="#181818"
-                  fillRule="evenodd"
-                  d="M12.256 15.686c.215.152.491.19.738.097a.774.774 0 00.483-.56c.579-2.723 1.984-9.614 2.512-12.091a.52.52 0 00-.174-.505.534.534 0 00-.531-.094C12.489 3.568 3.88 6.798.361 8.1A.551.551 0 000 8.633c.008.236.167.44.395.509 1.578.472 3.65 1.129 3.65 1.129s.968 2.923 1.472 4.41c.064.186.21.333.402.384a.578.578 0 00.541-.138l2.064-1.949s2.381 1.746 3.732 2.708zm-7.34-5.785l1.12 3.692.248-2.338 6.79-6.124a.185.185 0 00.022-.251.19.19 0 00-.25-.043l-7.93 5.064z"
-                  clipRule="evenodd"
-                ></path>
-              </g>
-              <defs>
-                <clipPath id="clip0_702_1336">
-                  <path
-                    fill="#fff"
-                    d="M0 0H16V16H0z"
-                    transform="translate(0 .5)"
-                  ></path>
-                </clipPath>
-              </defs>
-            </svg>
-            Bio: {bio}
+           
+            {bio}
           </h3>
         </span>
+        <button 
+        className="flex justify-center items-center bg-black text-white rounded-full px-12 py-1 mt-4 "
+        onClick={() => {
+          window.open("https://app.wagmi.io", "_blank")
+        }}
+      >
+        Share my profile
+      </button>
       </span>
+      
     </div>
   );
 };

@@ -3,12 +3,12 @@ import React, { use, useEffect } from 'react'
 import Image from "next/image";
 import { Inter, Familjen_Grotesk } from "next/font/google";
 import { WebtreeLogo } from '@/assets';
-// import { ConnectKitButton } from "connectkit";
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
-// import { useAccount,useSignMessage } from 'wagmi';
-import { useSigner, ConnectWallet, useAddress } from "@thirdweb-dev/react"
+import { useAccount,useSignMessage } from 'wagmi';
+// import { useSigner, ConnectWallet, useAddress } from "@thirdweb-dev/react"
 
 
 import axios from 'axios';
@@ -24,9 +24,10 @@ interface indexProps {
 
 const Login: React.FC<indexProps> = ({}) => {
      const { token, setToken,firtTimeLogin,setFirtTimeLogin,setUserInfo,userInfo} = useUserStore()
-     const address = useAddress()
-     const signer = useSigner()
+    //  const address = useAddress()
+    //  const signer = useSigner()
 
+    const { address } = useAccount()
     const router = useRouter()
 
     useEffect(() => {
@@ -38,14 +39,14 @@ const Login: React.FC<indexProps> = ({}) => {
     ,  [token, router, firtTimeLogin, address, userInfo])
 
    
-    // const { data, error, isLoading, signMessage } = useSignMessage({
+    const { data, error, isLoading, signMessage } = useSignMessage({
 
-    //     onSuccess: (data,variables) => {
+        onSuccess: (data,variables) => {
            
-    //         createOrLogin({sign: data, nonce: variables.message})
+            createOrLogin({sign: data, nonce: variables.message})
             
-    //     }
-    //   });
+        }
+      });
 
 
 
@@ -53,10 +54,10 @@ const Login: React.FC<indexProps> = ({}) => {
         try{
             const response = await axios.get(`${BE_URL}auth/nonce`)
           
-            // signMessage({message: response.data?.data?.nonce})
-            signer?.signMessage(response.data?.data?.nonce).then((data) => {
-                createOrLogin({sign: data, nonce: response.data?.data?.nonce})
-            })
+             signMessage({message: response.data?.data?.nonce})
+            // signer?.signMessage(response.data?.data?.nonce).then((data) => {
+            //     createOrLogin({sign: data, nonce: response.data?.data?.nonce})
+            // })
            
         }
         catch(error){
@@ -110,7 +111,7 @@ const Login: React.FC<indexProps> = ({}) => {
 
                 <div className="flex justify-center mt-12">
                     {
-                        !address ?  <ConnectWallet/> 
+                        !address ?  <ConnectButton/> 
                      :                 <button className="flex justify-center items-center bg-white text-black rounded-full px-8 py-2 mt-12 
                         mx-auto hover:border-gray-800 hover:border-2 ease-in-out hover:bg-gray-200 transition duration-300
                         border-2 border-black

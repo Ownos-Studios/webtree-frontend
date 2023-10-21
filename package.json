@@ -9,18 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "0xsequence": "^1.2.8",
+    "@0xsequence/rainbowkit-plugin": "^2.1.4",
+    "@particle-network/auth": "^1.2.1",
+    "@particle-network/rainbowkit-ext": "^1.2.0",
+    "@rainbow-me/rainbowkit": "^1.1.2",
     "@thirdweb-dev/react": "^4.0.7",
     "@thirdweb-dev/sdk": "^4.0.6",
     "axios": "^1.5.1",
     "connectkit": "^1.5.3",
-    "ethers": "^5",
+    "ethers": "^6.8.0",
     "next": "13.5.4",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-qr-code": "^2.0.12",
     "viem": "^1.16.6",
-    "wagmi": "^1.4.4",
+    "wagmi": "^1.4.5",
     "zustand": "^4.4.3"
   },
   "devDependencies": {

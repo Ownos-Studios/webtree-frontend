@@ -10,7 +10,7 @@ import { useUserStore } from "@/store/user";
 import { useEffect, useState } from "react";
 import { BE_URL } from "../_app";
 import toast, { Toaster } from "react-hot-toast";
-import { useAddress } from "@thirdweb-dev/react";
+import { useAccount } from "wagmi";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,20 +21,23 @@ const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
 export default function Home() {
   const { token, wallet } = useUserStore();
-  const address = useAddress();
+  const { address } = useAccount();
  const [userInfo, setUserInfo] = useState<any>({
   userData: false,
-  proofs: false,
+  proofs: [],
  });
 
  const parseProofs = (proofs:any) => {
+  console.log(proofs)
   switch(proofs?.type){
     case "google-login":
-      const data = JSON.parse(proofs?.verification?.parameters);
+      const data =
+      proofs?.isVerified ? JSON.parse(proofs?.verification?.parameters) : false;
       return {
-        company: data?.emailAddress?.split("@")[1], 
-        name: data?.emailAddress?.split("@")[0],
-        email: data?.emailAddress,
+        type: "email",
+        company: data?.emailAddress?.split("@")[1] || false,
+        name: data?.emailAddress?.split("@")[0] || false,
+        email: data?.emailAddress || false,
         timestamp: proofs?.updatedAt,
         isVerified: proofs?.isVerified
       }
@@ -49,8 +52,11 @@ export default function Home() {
         }
       })
       
-      const dataCheck = await parseProofs(response?.data?.data?.proofs?.find((proof:any) => proof?.isVerified))
-
+      let dataCheck:any = []
+      await response?.data?.data?.proofs?.forEach((proof:any) => {
+        dataCheck.push(parseProofs(proof))
+      })
+      
       setUserInfo({
         userData: response?.data?.data?.user,
         proofs: dataCheck,
@@ -60,6 +66,7 @@ export default function Home() {
     }
     catch(error){
       console.log(error)
+      window.location.href = "/"
     }
   }
   const GetVerificationLink = async() => {
@@ -99,11 +106,35 @@ export default function Home() {
           {/* <p className="text-[18px] font-bold">12</p> */}
         </span>
         <div className="flex flex-col gap-[12px] ">
+
+        {
+          userInfo?.proofs?.filter((v:any) => 
+            v?.isVerified
+          )?.map((proof:any) => {
+            return (
+              <Link 
+                key={proof?.company}
+                type={proof?.type || false}
+                name={proof?.email || false}
+                isVerified={proof?.isVerified || false}
+                timestamp={proof?.timestamp || false}
+              />
+            )
+          })
+        }
+        {
+          // check whether type google exists in proofs if so check whether it is not gmail.com and !gmail.com does not exist in proofs
+
+          !userInfo?.proofs?.find((v:any) => v?.type === "google" && v?.company?.includes("gmail")) && !userInfo?.proofs?.find((v:any) => v?.type === "google") ?
           <Link 
-            name={userInfo?.proofs?.email || "Verify your email"}
-            isVerified={userInfo?.proofs?.isVerified || false}
-            timestamp={userInfo?.proofs?.timestamp || false}
-          />
+            name={"Verify your work email"}
+            isVerified={false}
+            timestamp={false}
+          /> : ""
+        }
+        
+         
+        
           {/* <Link /> */}
           {/* <AddMore /> */}
         </div>
@@ -119,31 +150,24 @@ export default function Home() {
         const url = data?.isVerified ? false : await GetVerificationLink()
 
           if(url){
-            window?.innerWidth > 768 ? window.open(window.location + "/user/qr?code=" + url, "_blank") :
-            window.open(url,"_blank");
+          
+            window?.innerWidth > 768 ?   
+            window.open(window.location + "/user/qr?code=" + url, "_blank") :
+            navigator.userAgent.match(/(iPod|iPhone|iPad)/) ?   window.open(window.location + "/user/qr?code=" + url, "_blank")
+            : window.open(url, "_blank")
           } else {
             toast.success("You are already verified")
           }
         }}
       >
         <h1 className="flex items-center text-[18px] font-semibold">
-          {/* <svg
-            className="mr-2"
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="14"
-            fill="none"
-            viewBox="0 0 16 14"
-          >
-            <path
-              fill="#000"
-              d="M13.829 2.786a3.135 3.135 0 001.376-1.73 6.264 6.264 0 01-1.987.758A3.135 3.135 0 007.884 4.67a8.883 8.883 0 01-6.448-3.27 3.135 3.135 0 00.968 4.178 3.118 3.118 0 01-1.416-.392v.04a3.13 3.13 0 002.51 3.067c-.46.125-.944.144-1.413.054a3.135 3.135 0 002.923 2.173 6.277 6.277 0 01-3.886 1.339c-.25 0-.5-.014-.747-.043a8.856 8.856 0 004.796 1.406 8.842 8.842 0 008.902-8.903c0-.136-.003-.27-.01-.405a6.356 6.356 0 001.563-1.62c-.571.253-1.177.42-1.797.493z"
-            ></path>
-          </svg> */}
           {data?.name}
         </h1>
         {data?.isVerified ? 
-        <p className="text-[#18181880] text-[10px]">Verified on {new Date(data?.timestamp).toLocaleString()}</p> : "" }
+        <p className="text-[#18181880] text-[10px]">Verified on {new Date(data?.timestamp).toLocaleDateString()
+        
+        
+        }</p> : "" }
       </button>
     );
   };
@@ -173,15 +197,20 @@ export default function Home() {
         </svg>
         <User
           wallet={userInfo?.userData?.wallet || ""}
-          company={userInfo?.proofs?.company || "Verify your email"}
+          company={userInfo?.proofs?.company?.includes("gmail") ? "Verify your work email" : userInfo?.proofs?.company
+            || "Verify your email"}
           name={userInfo?.userData?.username || false}
           email={userInfo?.proofs?.email || false}
           bio={userInfo?.userData?.bio || false}
         />
+        
+
         <Links
 
         />
+         
       </section>
+    
     </section>
     </>
   );
