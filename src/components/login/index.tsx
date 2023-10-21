@@ -3,11 +3,12 @@ import React, { use, useEffect } from 'react'
 import Image from "next/image";
 import { Inter, Familjen_Grotesk } from "next/font/google";
 import { WebtreeLogo } from '@/assets';
-import { ConnectKitButton } from "connectkit";
+// import { ConnectKitButton } from "connectkit";
 
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
-import { useAccount,useSignMessage } from 'wagmi';
+// import { useAccount,useSignMessage } from 'wagmi';
+import { useSigner, ConnectWallet, useAddress } from "@thirdweb-dev/react"
 
 
 import axios from 'axios';
@@ -23,34 +24,39 @@ interface indexProps {
 
 const Login: React.FC<indexProps> = ({}) => {
      const { token, setToken,firtTimeLogin,setFirtTimeLogin,setUserInfo,userInfo} = useUserStore()
-    const { address, isConnected} = useAccount();
+     const address = useAddress()
+     const signer = useSigner()
 
     const router = useRouter()
 
     useEffect(() => {
-        if(isConnected && token?.length > 0 ){
+        if(address && token?.length > 0 ){
             //@ts-ignore
             firtTimeLogin ? router.push("/user/onboard") : router.push(`/`)
         }
     }
-    , [isConnected, token, router, firtTimeLogin, address, userInfo])
+    ,  [token, router, firtTimeLogin, address, userInfo])
 
    
-    const { data, error, isLoading, signMessage } = useSignMessage({
+    // const { data, error, isLoading, signMessage } = useSignMessage({
 
-        onSuccess: (data,variables) => {
+    //     onSuccess: (data,variables) => {
            
-            createOrLogin({sign: data, nonce: variables.message})
+    //         createOrLogin({sign: data, nonce: variables.message})
             
-        }
-      });
+    //     }
+    //   });
+
 
 
     const getNonce = async () => {
         try{
             const response = await axios.get(`${BE_URL}auth/nonce`)
           
-            signMessage({message: response.data?.data?.nonce})
+            // signMessage({message: response.data?.data?.nonce})
+            signer?.signMessage(response.data?.data?.nonce).then((data) => {
+                createOrLogin({sign: data, nonce: response.data?.data?.nonce})
+            })
            
         }
         catch(error){
@@ -104,8 +110,8 @@ const Login: React.FC<indexProps> = ({}) => {
 
                 <div className="flex justify-center mt-12">
                     {
-                        !isConnected ?  <ConnectKitButton
-                        /> :                 <button className="flex justify-center items-center bg-white text-black rounded-full px-8 py-2 mt-12 
+                        !address ?  <ConnectWallet/> 
+                     :                 <button className="flex justify-center items-center bg-white text-black rounded-full px-8 py-2 mt-12 
                         mx-auto hover:border-gray-800 hover:border-2 ease-in-out hover:bg-gray-200 transition duration-300
                         border-2 border-black
                     "

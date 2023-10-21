@@ -8,11 +8,12 @@ import { User } from "../components/User"
 import axios from "axios";
 import { useUserStore } from "@/store/user";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAddress } from "@thirdweb-dev/react";
 import { BE_URL } from "./_app";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useRouter } from "next/router";
+
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -25,7 +26,7 @@ export default function Home() {
 
     const router = useRouter()
   const { token, wallet } = useUserStore();
-  const { address } = useAccount();
+  const address = useAddress();
  const [userInfo, setUserInfo] = useState<any>({
   userData: false,
   proofs: false,

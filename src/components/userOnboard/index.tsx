@@ -9,7 +9,8 @@ import axios from 'axios';
 import { BE_URL } from '@/pages/_app';
 import { useRouter } from 'next/router';
 import useStore from '@/store/useStore';
-import { useAccount } from 'wagmi';
+import { useAddress } from '@thirdweb-dev/react';
+
 
 
 
@@ -23,7 +24,7 @@ interface indexProps {
 
 const UserOnBoard: React.FC<indexProps> = ({}) => {
     const router = useRouter()
-    const { address } = useAccount();
+   const address = useAddress()
         const { setUserInfo } = useUserStore()
         const userInfo = useStore(useUserStore, (state) => state.userInfo) as any
         
