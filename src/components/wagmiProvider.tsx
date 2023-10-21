@@ -35,9 +35,6 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 
 const particleWallets = [
     particleWallet({ chains, authType: 'google' }),
-    particleWallet({ chains, authType: 'facebook' }),
-    particleWallet({ chains, authType: 'apple' }),
-    particleWallet({ chains }),
 ];
 
 const popularWallets = {

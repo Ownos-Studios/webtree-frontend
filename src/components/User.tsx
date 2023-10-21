@@ -1,20 +1,29 @@
+import { useEffect, useState } from "react";
+
 interface UserProps {
   wallet: string;
 }
 
 export const User = ({
+   username,
    wallet,
    company,
    name,
    email,
    bio,
 }: {
+  username: string;
   wallet: string;
   company: string | false,
   name: string | false
   email: string | false,
   bio: string | false
 }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   return (
     <div className="flex w-full gap-[16px] justify-center mt-[36px] border-b-[1px] pb-[19px] border-[#181818]">
       <picture>
@@ -60,14 +69,21 @@ export const User = ({
             {bio}
           </h3>
         </span>
+
+        {isClient &&
+          
+        
         <button 
         className="flex justify-center items-center bg-black text-white rounded-full px-12 py-1 mt-4 "
         onClick={() => {
-          window.open("https://app.wagmi.io", "_blank")
+         window?.navigator.clipboard.writeText(
+          window?.location.href.includes(username) ? window?.location.href :
+          window?.location.href + username
+         )
         }}
       >
-        Share my profile
-      </button>
+    {window?.location?.href.includes(username) ? 'Share this profile' : 'Share my profile'}
+      </button> }
       </span>
       
     </div>

@@ -111,7 +111,9 @@ const Login: React.FC<indexProps> = ({}) => {
 
                 <div className="flex justify-center mt-12">
                     {
-                        !address ?  <ConnectButton/> 
+                        !address ?  <ConnectButton label='Sign in' 
+                            
+                        /> 
                      :                 <button className="flex justify-center items-center bg-white text-black rounded-full px-8 py-2 mt-12 
                         mx-auto hover:border-gray-800 hover:border-2 ease-in-out hover:bg-gray-200 transition duration-300
                         border-2 border-black
