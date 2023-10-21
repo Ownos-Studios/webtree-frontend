@@ -48,15 +48,14 @@ export default function Home() {
           Authorization: `Bearer ${token}`
         }
       })
-
-      const dataCheck = await parseProofs(response?.data?.data?.proofs[0])
+      
+      const dataCheck = await parseProofs(response?.data?.data?.proofs?.find((proof:any) => proof?.isVerified))
 
       setUserInfo({
         userData: response?.data?.data?.user,
         proofs: dataCheck,
       })
 
-      console.log(userInfo)
       
     }
     catch(error){
@@ -84,9 +83,10 @@ export default function Home() {
    
     fetchUserInfo()
 
-    const interval = setInterval(() => {
+    setInterval(() => {
       fetchUserInfo()
-    }, 5000);
+    }, 5000)
+    
 
 
   }, [token])
