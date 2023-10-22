@@ -123,7 +123,9 @@ export default function Home() {
   const Link = (data:any) => {
     return (
       <button className="flex flex-col db-border items-center py-[12px]  w-full"
-        onClick={() => {}}
+        onClick={() => 
+          window.open(window.location.href , "_blank")
+        }
       >
         <h1 className="flex items-center text-[18px] font-semibold">
           {/* <svg
