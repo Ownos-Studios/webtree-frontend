@@ -175,8 +175,7 @@ export default function Home() {
           username={userInfo?.userData?.username || ""}
           wallet={userInfo?.userData?.wallet || ""}
           company={
-            userInfo?.proofs?.length > 0 && userInfo?.proofs?.company?.filter((proof:any) => proof?.type === "email" &&  !proof?.email?.includes("gmail"))?.length > 0
-            ? userInfo?.proofs?.company?.find((proof:any) => proof?.type === "email" &&  !proof?.email?.includes("gmail"))?.company : "Not yet verified"
+            userInfo?.proofs?.length > 0 && userInfo?.proofs?.find((proof:any) => proof?.type === "email" &&  !proof?.email?.includes("gmail"))?.company || "Not yet verified"
           }
           name={userInfo?.userData?.username || false}
           email={userInfo?.proofs?.email || false}

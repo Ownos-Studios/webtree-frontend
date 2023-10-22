@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 interface UserProps {
   wallet: string;
@@ -25,6 +26,8 @@ export const User = ({
     setIsClient(true);
   }, []);
   return (
+    <>
+    <Toaster />
     <div className="flex w-full gap-[16px] justify-center mt-[36px] border-b-[1px] pb-[19px] border-[#181818]">
       <picture>
         <img
@@ -76,10 +79,12 @@ export const User = ({
         <button 
         className="flex justify-center items-center bg-black text-white rounded-full px-12 py-1 mt-4 "
         onClick={() => {
+          
          window?.navigator.clipboard.writeText(
           window?.location.href.includes(username) ? window?.location.href :
           window?.location.href + username
          )
+         toast.success('Copied to clipboard')
         }}
       >
     {window?.location?.href.includes(username) ? 'Share this profile' : 'Share my profile'}
@@ -87,5 +92,6 @@ export const User = ({
       </span>
       
     </div>
+    </>
   );
 };

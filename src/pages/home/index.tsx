@@ -29,7 +29,6 @@ export default function Home() {
  });
 
  const parseProofs = (proofs:any) => {
-  console.log(proofs)
   switch(proofs?.type){
     case "google-login":
       const data =
@@ -100,6 +99,13 @@ export default function Home() {
   }, [token])
 
   const Links = () => {
+    const emailProofs = userInfo?.proofs?.filter((proof: any) => {
+      return proof?.type === "email" && typeof proof?.email === "string" && !proof?.email.includes("gmail");
+    });
+    
+    const emailProofsLength = emailProofs?.length || 0;
+    
+  
     return (
       <section className="fle w-full px-[25px] py-[12px]">
         <span className="flex items-center justify-between mb-[16px]">
@@ -123,15 +129,16 @@ export default function Home() {
             )
           })
         }
-        {
-          // check whether type google exists in proofs if so check whether it is not gmail.com and !gmail.com does not exist in proofs
 
-          !userInfo?.proofs?.find((v:any) => v?.type === "google" && v?.company?.includes("gmail")) && !userInfo?.proofs?.find((v:any) => v?.type === "google") ?
-          <Link 
-            name={"Verify your work email"}
-            isVerified={false}
-            timestamp={false}
-          /> : ""
+        {
+          
+          emailProofsLength > 0 ?
+          ""
+          :  <Link 
+          name={"Verify your work email"}
+          isVerified={false}
+          timestamp={false}
+        />
         }
         
          
@@ -212,8 +219,7 @@ export default function Home() {
           username={userInfo?.userData?.username || ""}
           wallet={userInfo?.userData?.wallet || ""}
           company={
-            userInfo?.proofs?.length > 0 && userInfo?.proofs?.company?.filter((proof:any) => proof?.type === "email" &&  !proof?.email?.includes("gmail"))?.length > 0
-            ? userInfo?.proofs?.company?.find((proof:any) => proof?.type === "email" &&  !proof?.email?.includes("gmail"))?.company : "Not yet verified"
+            userInfo?.proofs?.length > 0 && userInfo?.proofs?.find((proof: any) => proof?.type === "email" && typeof proof?.email === "string" && !proof?.email.includes("gmail"))?.company || "Not yet verified"
           }
           name={userInfo?.userData?.username || false}
           email={userInfo?.proofs?.email || false}
