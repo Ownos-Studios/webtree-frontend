@@ -63,7 +63,7 @@ export default function Home() {
           proofs?.isVerified ? JSON.parse(proofs?.verification?.parameters) : false;
           return {
             type: "email",
-            company: data?.emailAddress?.split("@")[1] || false,
+            company: data?.emailAddress?.split("@")[1]?.split(".")[0] || false,
             name: data?.emailAddress?.split("@")[0] || false,
             email: data?.emailAddress || false,
             timestamp: proofs?.updatedAt,
