@@ -218,7 +218,7 @@ export default function Home() {
           window.location.href = "/"
         } }
         >
-          Create your own webtree
+          Create your own Webtree
         </button> }
       </section>
       
