@@ -153,7 +153,7 @@ export default function Home() {
           
             window?.innerWidth > 768 ?   
             window.open(window.location + "/user/qr?code=" + url, "_blank") :
-            navigator.userAgent.match(/(iPod|iPhone|iPad)/) ?   window.open(window.location + "/user/qr?code=" + url, "_blank")
+            navigator.userAgent.match(/(iPod|iPhone|iPad)/) ?  window.open(url, "_top") 
             : window.open(url, "_blank")
           } else {
             toast.success("You are already verified")
