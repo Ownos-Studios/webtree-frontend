@@ -55,7 +55,7 @@ export default function Home() {
     , [router.isReady, router.query.username])
 
     const parseProofs = (proofs:any) => {
-      console.log(proofs)
+      
       switch(proofs?.type){
         case "google-login":
           const data =
