@@ -52,7 +52,6 @@ export default function Home() {
         fetchUserInfo({username: router.query.username as string})
         }
     }
-   
     , [router.isReady, router.query.username])
 
     const parseProofs = (proofs:any) => {
