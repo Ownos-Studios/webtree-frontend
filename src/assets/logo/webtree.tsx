@@ -1,10 +1,6 @@
 import React from "react";
 
-function WebtreeLogo({
-    className = "",
-    }: {
-    className?: string;
-}) {
+function WebtreeLogo({ className = "" }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +8,7 @@ function WebtreeLogo({
       height="251"
       fill="none"
       viewBox="0 0 298 251"
-        className={className}
+      className={className}
     >
       <path
         fill="#000"
