@@ -108,9 +108,7 @@ const UsernamePick = ({
 }) => {
   const router = useRouter();
   const { setUserInfo } = useUserStore();
-  const [userState, setUserState] = useState<any>({
-    username: "",
-  });
+  const [userState, setUserState] = useState<any>("");
 
   const token = useStore(useUserStore, (state) => state.token) as string;
 
@@ -130,14 +128,18 @@ const UsernamePick = ({
       if (res.status === 200) {
         setUsernameAvailable(true);
         return true;
+       
       } else {
+        
         setUsernameAvailable(false);
         return false;
+      
       }
     } catch (error) {
-      console.log(error);
       setUsernameAvailable(false);
       return false;
+    
+   
     }
   };
 
@@ -149,7 +151,7 @@ const UsernamePick = ({
     <div className="flex flex-col w-[340px] items-center">
       <h1 className={"text-[48px] font-bold text-center"}>Select a username</h1>
       <p className="text-center text-[16px] leading-6 mt-[12px] text-[#575A5C]">
-        This uername will be used as your shareable webtree link
+        This username will be used as your shareable webtree link
       </p>
       <span className="flex flex-col mt-[48px]">
         <label
@@ -158,41 +160,38 @@ const UsernamePick = ({
         >
           <input
              onChange={async (e) => {
-              setUserState({ ...userState, username: e.target.value });
+              setUserState(e.target.value?.toLowerCase());
               if(e.target.value.length > 0){
-             await userNameAvailablityCheck(e.target.value);
+             await userNameAvailablityCheck(e.target.value?.toLowerCase());
              }
               
-          
-            
             }}
           
-            value={userState.username}
+            value={userState}
             className="rounded-[12px] flex flex-1 bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
             type="text"
-            placeholder="Enter firstname"
+            placeholder="Enter your username"
           />
-          <p className="font-bold text-red-600">.tree</p>
+          {/* <p className="font-bold text-red-600">.tree</p> */}
         </label>
-        {userState?.username?.length > 0 ? (
-          usernameAvailable ? (
-            <p className="text-[18px] font-bold text-green-600 text-center">
-              Username Available
-            </p>
-          ) : (
-            <p className="text-[18px] font-bold text-green-600 text-center">
-              Username Available
-            </p>
-          )
-        ) : (
-          ""
-        )}
+      
       </span>
+
+      {
+        userState?.length > 0 &&
+        <p className={`text-[14px] text-[#575A5C] mt-[12px]
+        ${usernameAvailable ? 'text-green-600' : 'text-red-600'}
+        `}>
+        {usernameAvailable ? "username available" : "username not available"}
+      </p>
+      }
       <button
         onClick={() => {
-          if (userState.username?.length > 0) {
+          if (userState.length > 0) {
+            toast.success("username available");
             if (usernameAvailable) {
-              setUserInfo({ ...userInfo, ...userState });
+           
+              setUserInfo({ ...userInfo, username: userState });
               setstep(steps.SET_BIO);
             } else {
               toast.error("username not available");

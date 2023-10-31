@@ -15,8 +15,13 @@ const Intro = ({}) => {
   return (
     <section>
       <span className="flex overflow-hidden justify-center items-center w-full h-screen">
-        <picture className="absolute left-0 top-0 ">
-          <img className="w-full h-full object-cover" src={logobg.src} alt="" />
+        <picture className="absolute left-0 top-0 w-full">
+          <img className="
+          object-fill
+          w-full  h-full  
+        
+
+          " src={logobg.src} alt="" />
         </picture>
         <div
           className={`${grotesk.className} h-full  flex w-96 text-center flex-col items-center z-10`}

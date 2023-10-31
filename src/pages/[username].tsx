@@ -66,9 +66,9 @@ export default function Home() {
             : false;
           return {
             type: "email",
-            company: data?.emailAddress?.split("@")[1] || false,
+            company: data?.emailAddress?.split("@")[1]?.split(".")[0] || false,
             name: data?.emailAddress?.split("@")[0] || false,
-            email: data?.emailAddress || false,
+            email:data?.emailAddress?.split("@")[1] || false,
             timestamp: proofs?.updatedAt,
             isVerified: proofs?.isVerified,
           };

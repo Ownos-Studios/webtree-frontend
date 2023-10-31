@@ -43,7 +43,7 @@ export default function Main() {
           : false;
         return {
           type: "email",
-          company: data?.emailAddress?.split("@")[1] || false,
+          company: data?.emailAddress?.split("@")[1]?.split(".")[0] || false,
           name: data?.emailAddress?.split("@")[0] || false,
           email: data?.emailAddress || false,
           timestamp: proofs?.updatedAt,
