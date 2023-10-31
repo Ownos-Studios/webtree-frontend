@@ -11,6 +11,8 @@ type userStore = {
         firstName: string;
         lastName: string;
         username: string;
+        bio?: string;
+        tags?: string[];
     } | object;
     setUserInfo: (userInfo: object) => void;
     firtTimeLogin: boolean;
@@ -31,6 +33,8 @@ export const useUserStore = create(
             firstName: "",
             lastName: "",
             username: "",
+            bio: "",
+            tags: [],
         },
         setUserInfo: (userInfo: object) => set({ userInfo }),
         firtTimeLogin: false,

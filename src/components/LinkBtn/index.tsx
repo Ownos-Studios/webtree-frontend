@@ -19,7 +19,9 @@ type platformType =
   | "discord"
   | "github"
   | "linkedin"
-  | "youtube";
+  | "youtube"
+  | "instagram"
+  | "spotify"
 
 const socialIcons = {
   twitter: twitter.src,
@@ -31,6 +33,8 @@ const socialIcons = {
   github: github.src,
   linkedin: linkedin.src,
   youtube: youtube.src,
+  instagram: web.src,
+  spotify: web.src,
 };
 
 function LinkBtn({
@@ -39,13 +43,14 @@ function LinkBtn({
   color = "#D6E0EA",
 }: {
   platform: platformType;
-  link: string;
+  link: () => void;
   color?: string;
 }) {
   return (
     <div
       style={{ background: color }}
-      className="border-btn h-[72px] w-full flex flex-col justify-center items-center "
+      className="border-btn h-[72px] w-full flex flex-col justify-center items-center mt-2 "
+      onClick={link}
     >
       <span className="flex gap-3 items-center">
         <picture>
@@ -57,16 +62,20 @@ function LinkBtn({
         </picture>
         <h3 className="text-[18px] font-semibold">{platform}</h3>
       </span>
-      <p className="text-[10px] mt-1 text-[#18181880]">Verified on 12.09.23</p>
+
+      {/* <p className="text-[10px] mt-1 text-[#18181880]">Verified on 12.09.23</p> */}
     </div>
   );
 }
 
-export const AddMore = () => {
+export const AddMore = ({setModal}: {
+  setModal: (modal: boolean) => void;
+}) => {
   return (
     <div
       style={{ background: "#E4EAD6" }}
       className="border-btn h-[72px] w-full flex flex-col justify-center items-center "
+      onClick={() => setModal(true)}
     >
       <span className="flex gap-3 items-center">
         <picture>

@@ -7,7 +7,7 @@ import Google from "./../../assets/google";
 
 //fonts
 import { Inter, Familjen_Grotesk } from "next/font/google";
-import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
+import { ConnectButton, useConnectModal,Wallet } from "@rainbow-me/rainbowkit";
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
@@ -105,10 +105,11 @@ const Login: React.FC<indexProps> = ({}) => {
         </p>
 
         <span className="flex flex-col gap-y-4 text-[18px] font-semibold mt-[48px]">
-          <button className="cursor-pointer border-btn py-[22px] w-[340px] flex items-center justify-center gap-x-2">
+          {/* <button 
+          className="cursor-pointer border-btn py-[22px] w-[340px] flex items-center justify-center gap-x-2">
             <Google />
             Sign in with Google
-          </button>
+          </button> */}
           {!address ? (
             <button
               onClick={() => {
@@ -131,7 +132,7 @@ const Login: React.FC<indexProps> = ({}) => {
               <picture>
                 <img src={rainbowkit.src} alt="" />
               </picture>
-              Sign message to login
+              Please Sign the message to login
             </button>
           )}
         </span>

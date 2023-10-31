@@ -28,30 +28,84 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
 
   const nameExists =
     userInfo?.firstName?.length > 0 && userInfo?.lastName.length > 0;
-
+  const usernameExists = userInfo?.username?.length > 0;
   const [currentstep, setstep] = useState(steps.SET_BIO);
+  const token = useStore(useUserStore, (state) => state.token) as string;
+ const [bio, setBio] = useState<any>({
+    bio: "",
+    tags: [],
+    newTag: "",
+  });
+    
+
+
 
   useEffect(() => {
-    if (nameExists && currentstep == steps.SET_NAME) {
-      setstep(steps.SET_USERNAME);
+    if(token?.length < 1){
+      router.push('/')
     }
-  }, [nameExists]);
+    if(!nameExists){
+      setstep(steps.SET_NAME)
+    } else if(!usernameExists && nameExists){
+      setstep(steps.SET_USERNAME)
+    }  else if(usernameExists && nameExists){
+      setstep(steps.SET_BIO)
+    }
+    // if (nameExists && currentstep == steps.SET_NAME) {
+    //   setstep(steps.SET_USERNAME);
+    // }
+  }, [nameExists, usernameExists]);
 
+
+  const updateUserInfo = async () => {
+    try {
+      const res = await axios.post(
+        `${BE_URL}user/update`,
+        {
+          firstName: userInfo.firstName,
+          lastName: userInfo.lastName,
+          username: userInfo.username,
+          bio: bio.bio,
+          tags: bio.tags,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    
+      if (res.status === 200) {
+        toast.success("user info updated");
+        router.push(`/`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Toaster position="top-right" />
       <section
         className={`flex w-full h-screen justify-center items-center ${grotesk.className} leading-[48px]`}
       >
-        {currentstep == steps.SET_NAME && <NamePick />}
-        {currentstep == steps.SET_USERNAME && <UsernamePick />}
-        {currentstep == steps.SET_BIO && <BioPick />}
+        {currentstep == steps.SET_NAME && <NamePick setstep={setstep} />}
+        {currentstep == steps.SET_USERNAME && <UsernamePick setstep={setstep} />}
+        {currentstep == steps.SET_BIO && <BioPick 
+        updateUserInfo={updateUserInfo}
+        bio={bio}
+        setBio={setBio}
+        />}
       </section>
     </>
   );
 };
 
-const UsernamePick = () => {
+const UsernamePick = ({
+  setstep,
+}: {
+  setstep: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const router = useRouter();
   const { setUserInfo } = useUserStore();
   const [userState, setUserState] = useState<any>({
@@ -62,10 +116,11 @@ const UsernamePick = () => {
 
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(false);
 
-  const userNameAvailablityCheck = async () => {
+  const userNameAvailablityCheck = async (username:string) => {
     try {
+      
       const res = await axios.get(
-        `${BE_URL}user/check?username=${userState.username}`,
+        `${BE_URL}user/check?username=${username}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -88,32 +143,7 @@ const UsernamePick = () => {
 
   const userInfo = useStore(useUserStore, (state) => state.userInfo) as any;
 
-  const updateUserInfo = async () => {
-    try {
-      const res = await axios.post(
-        `${BE_URL}user/update`,
-        {
-          firstName: userInfo.firstName,
-          lastName: userInfo.lastName,
-          username: userState.username,
-          bio: "",
-          tags: [],
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(res);
-      if (res.status === 200) {
-        toast.success("user info updated");
-        router.push(`/`);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+ 
 
   return (
     <div className="flex flex-col w-[340px] items-center">
@@ -127,10 +157,16 @@ const UsernamePick = () => {
           htmlFor=""
         >
           <input
-            onChange={(e) => {
+             onChange={async (e) => {
               setUserState({ ...userState, username: e.target.value });
-              userNameAvailablityCheck();
+              if(e.target.value.length > 0){
+             await userNameAvailablityCheck(e.target.value);
+             }
+              
+          
+            
             }}
+          
             value={userState.username}
             className="rounded-[12px] flex flex-1 bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
             type="text"
@@ -157,7 +193,7 @@ const UsernamePick = () => {
           if (userState.username?.length > 0) {
             if (usernameAvailable) {
               setUserInfo({ ...userInfo, ...userState });
-              updateUserInfo();
+              setstep(steps.SET_BIO);
             } else {
               toast.error("username not available");
             }
@@ -175,7 +211,11 @@ const UsernamePick = () => {
   );
 };
 
-const NamePick = () => {
+const NamePick = ({
+  setstep,
+}: {
+  setstep: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const { setUserInfo, userInfo } = useUserStore();
   const [userState, setUserState] = useState<any>({
     firstName: "",
@@ -187,7 +227,7 @@ const NamePick = () => {
     <div className="flex flex-col w-[340px] items-center">
       <h1 className={"text-[48px] font-bold text-center"}>Enter your name</h1>
       <p className="text-center text-[16px] leading-6 mt-[12px] text-[#575A5C]">
-        This uername will be used as your shareable webtree link
+        This username will be used as your shareable webtree link
       </p>
       <span className="flex flex-col mt-[48px]">
         <label htmlFor="">
@@ -225,6 +265,7 @@ const NamePick = () => {
             userState.lastName?.length > 0
           ) {
             setUserInfo({ ...userInfo, ...userState });
+            setstep(steps.SET_USERNAME);
           } else {
             if (userState.firstName?.length === 0) {
               toast.error("please enter your first name");
@@ -241,7 +282,20 @@ const NamePick = () => {
   );
 };
 
-const BioPick = () => {
+const BioPick = ({
+  updateUserInfo,
+  bio,
+  setBio
+}: {
+  updateUserInfo: () => void;
+  bio: { bio: string; tags: string[]; newTag: string;}
+  setBio: React.Dispatch<React.SetStateAction<any>>;
+}) => { 
+const { setUserInfo, userInfo } = useUserStore();
+
+
+
+
   return (
     <div className="flex flex-col w-[340px] items-center">
       <h1 className={"text-[48px] font-bold text-center"}>
@@ -255,17 +309,60 @@ const BioPick = () => {
           <p className="text-[14px] text-[#575A5C]">
             You can select up to 4 tags
           </p>
+          <div className="flex flex-row  mt-2  gap-2">
           <input
-            className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
+            className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]
+            w-full
+            "
             type="text"
             placeholder="Enter tags"
             required
+          
+            value={bio.newTag}
+            onChange={(e) =>
+              setBio({ ...bio, newTag: e.target.value })
+            }
           />
+          <button
+          className="w-1/4 bg-black text-white rounded-[12px] h-[48px] text-[#575A5C]"
+            onClick={() => {
+              if (bio.newTag?.length > 0) {
+                if (bio.tags.length < 4) {
+                  setBio({
+                    ...bio,
+                    tags: [...bio.tags, bio.newTag],
+                    newTag: "",
+                  });
+                } else {
+                  toast.error("you can only add upto 4 tags");
+                }
+              } else {
+                toast.error("please enter a tag");
+              }
+            }}
+           
+         >
+            Add Tag
+          </button>
+          </div>
         </label>
         <div className="flex flex-wrap  mt-2 w-fullv gap-2">
-          <Tag title={"Product Designer"} />
-          <Tag title={"Graphic Designer"} />
-          <Tag title={"Product Design Lead"} />
+          {
+         
+            bio?.tags?.map((tag: string, index: number) => {
+              return (
+                <Tag
+                  key={index}
+                  onClick={() => {
+                    setBio({...bio, tags: bio.tags.filter((t: string) => t !== tag)})
+                  }}
+                  title={tag}
+                />
+              );
+            })
+            
+          }
+        
         </div>
         <label htmlFor="">
           <p className="text-[14px] text-[#575A5C]">Write a Bio</p>
@@ -274,20 +371,39 @@ const BioPick = () => {
             className="rounded-[12px] bg-[#D6E0EA]  w-[340px] px-[12px]"
             placeholder="Start"
             required
+            value={bio.bio}
+            onChange={(e) =>
+              setBio({ ...bio, bio: e.target.value })
+            }
           />
         </label>
       </span>
-      <p className="text-[18px] text-[#575A5C]">Skip</p>
-      <button className="black-btn text-white w-[340px] mt-[24px] h-[68px]">
+      <p className="text-[18px] text-[#575A5C]"
+      onClick={() => {
+      setUserInfo({...userInfo, firstTimeLogin: false, bio: bio.bio, tags: bio.tags})
+      updateUserInfo()
+      }}
+      >Skip</p>
+      <button
+        onClick={async() => {
+          setUserInfo({...userInfo, firstTimeLogin: false, bio: bio.bio, tags: bio.tags})
+          updateUserInfo()
+       
+        }}
+      className="black-btn text-white w-[340px] mt-[24px] h-[68px]">
         Continue
       </button>
     </div>
   );
 };
 
-const Tag = ({ title }: { title: String }) => {
+const Tag = ({ title, onClick }: { title: String, 
+  onClick?: () => void
+}) => {
   return (
-    <span className="h-[39px] px-[10px] gap-2 flex border border-black rounded-[40px] justify-center items-center w-min">
+    <span
+      onClick={onClick}
+    className="h-[39px] px-[10px] gap-2 flex border border-black rounded-[40px] justify-center items-center w-min">
       <p className="w-max">{title}</p>
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React from "react";
 
 interface profileType {
@@ -9,9 +10,10 @@ interface profileType {
 }
 
 function Profile({ name, username, bio, company, tags }: profileType) {
+  const router = useRouter();
   return (
-    <div className="fles w-full h-screen">
-      <div className="relative flex flex-col rounded-[23.5px] p-[14.7px] w-[500px] bg-[#D6E0EA]">
+    <div className="fles w-full">
+      <div className="relative flex flex-col rounded-[23.5px] p-[14.7px] w-full bg-[#D6E0EA]">
         {/* Profile Img */}
         <picture className="absolute right-[14.7px] top-[14.7px]">
           <img
@@ -33,14 +35,19 @@ function Profile({ name, username, bio, company, tags }: profileType) {
             <>
               <p>{bio}</p>
             </>
-          ) : (
+          ) : 
+          (
             <>
-              <button className="bg-white p-[6px] rounded-[24px] text-[#575A5C] px-3">
+              <button
+              onClick={()=>{ router.push('/user/onboard') }}
+              className="bg-white p-[6px] rounded-[24px] text-[#575A5C] px-3">
                 + Add Bio
               </button>
               <Placeholder />
             </>
-          )}
+          )
+        
+        }
         </span>
         <span className="flex items-center gap-2 mt-[18.8px]">
           <h3 className="text-[#575A5C] text-[24px] font-semibold">Works</h3>
@@ -54,11 +61,15 @@ function Profile({ name, username, bio, company, tags }: profileType) {
               return <Tag title={ele} key={key + "tag"} />;
             })}
           </span>
-        ) : (
-          <button className="mt-[12px] bg-white p-[6px] rounded-[24px] w-fit text-[#575A5C] px-3 border border-[#A5BCB0]">
+        ) :
+        tags !== undefined ?
+        (
+          <button
+          onClick={()=>{ router.push('/user/onboard') }}
+          className="mt-[12px] bg-white p-[6px] rounded-[24px] w-fit text-[#575A5C] px-3 border border-[#A5BCB0]">
             + Add Tags
           </button>
-        )}
+        ) : ""}
       </div>
     </div>
   );
