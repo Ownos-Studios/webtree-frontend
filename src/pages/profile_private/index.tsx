@@ -47,6 +47,7 @@ function ProfilePage() {
             <LinkBtn platform="discord" link="" />
             <LinkBtn platform="linkedin" link="" />
             <LinkBtn platform="mail" link="" /> */}
+            
            
           </span>
         </div>
