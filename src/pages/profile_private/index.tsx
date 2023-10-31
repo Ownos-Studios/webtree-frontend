@@ -43,11 +43,11 @@ function ProfilePage() {
             </span>
           </span>
           <span className="flex flex-col mt-6 gap-3">
-            <LinkBtn platform="twitter" link="" />
+            {/* <LinkBtn platform="twitter" link="" />
             <LinkBtn platform="discord" link="" />
             <LinkBtn platform="linkedin" link="" />
-            <LinkBtn platform="mail" link="" />
-            <AddMore />
+            <LinkBtn platform="mail" link="" /> */}
+           
           </span>
         </div>
       </section>
