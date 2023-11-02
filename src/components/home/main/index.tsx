@@ -80,6 +80,10 @@ export default function Main() {
           Authorization: `Bearer ${token}`,
         },
       });
+     
+      if(response?.data?.data?.user?.username?.length === 0 || !response?.data?.data?.user?.username){
+        window.location.href = "/user/onboard";
+      }
   
       let dataCheck: any[] = []; // Initialize as an empty array
       response?.data?.data?.proofs?.forEach((proof: any) => {
@@ -282,7 +286,7 @@ export default function Main() {
               
                onClick={() => {
                 toast.success("Copied to clipboard")
-                window.navigator.clipboard.writeText(window.location.href + userInfo?.userData?.username)
+                window.navigator.clipboard.writeText(window.location.href + userInfo?.userData?.username ?? "")
               }}
               className="flex gap-1
               cursor-pointer

@@ -51,20 +51,16 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
     }  else if(usernameExists && nameExists){
       setstep(steps.SET_BIO)
     }
-    // if (nameExists && currentstep == steps.SET_NAME) {
-    //   setstep(steps.SET_USERNAME);
-    // }
   }, [nameExists, usernameExists]);
 
 
-  const updateUserInfo = async () => {
+  
+
+  const updateUserBio = async () => {
     try {
       const res = await axios.post(
-        `${BE_URL}user/update`,
+        `${BE_URL}user/updateBio`,
         {
-          firstName: userInfo.firstName,
-          lastName: userInfo.lastName,
-          username: userInfo.username,
           bio: bio.bio,
           tags: bio.tags,
         },
@@ -77,7 +73,7 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
     
       if (res.status === 200) {
         toast.success("user info updated");
-        router.push(`/`);
+        router.push('/')
       }
     } catch (error) {
       console.log(error);
@@ -90,9 +86,10 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
         className={`flex w-full h-screen justify-center items-center ${grotesk.className} leading-[48px]`}
       >
         {currentstep == steps.SET_NAME && <NamePick setstep={setstep} />}
-        {currentstep == steps.SET_USERNAME && <UsernamePick setstep={setstep} />}
+        {currentstep == steps.SET_USERNAME && <UsernamePick setstep={setstep}
+        />}
         {currentstep == steps.SET_BIO && <BioPick 
-        updateUserInfo={updateUserInfo}
+        updateUserInfo={updateUserBio}
         bio={bio}
         setBio={setBio}
         />}
@@ -102,7 +99,7 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
 };
 
 const UsernamePick = ({
-  setstep,
+  setstep
 }: {
   setstep: React.Dispatch<React.SetStateAction<string>>;
 }) => {
@@ -113,7 +110,34 @@ const UsernamePick = ({
   const token = useStore(useUserStore, (state) => state.token) as string;
 
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(false);
-
+  const updateUserInfo = async ({firstName,lastName,username}:{
+    firstName: string,
+    lastName: string,
+    username: string
+  }) => {
+    try {
+      const res = await axios.post(
+        `${BE_URL}user/update`,
+        {
+          firstName: firstName,
+          lastName: lastName,
+          username: username
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    
+      if (res.status === 200) {
+        setstep(steps.SET_BIO);
+      }
+    } catch (error) {
+      toast.error("something went wrong");
+      console.log(error);
+    }
+  };
   const userNameAvailablityCheck = async (username:string) => {
     try {
       
@@ -188,11 +212,9 @@ const UsernamePick = ({
       <button
         onClick={() => {
           if (userState.length > 0) {
-            toast.success("username available");
             if (usernameAvailable) {
-           
               setUserInfo({ ...userInfo, username: userState });
-              setstep(steps.SET_BIO);
+              updateUserInfo({firstName: userInfo.firstName, lastName: userInfo.lastName, username: userState})
             } else {
               toast.error("username not available");
             }
@@ -291,7 +313,7 @@ const BioPick = ({
   setBio: React.Dispatch<React.SetStateAction<any>>;
 }) => { 
 const { setUserInfo, userInfo } = useUserStore();
-
+const router = useRouter();
 
 
 
@@ -381,14 +403,18 @@ const { setUserInfo, userInfo } = useUserStore();
         cursor-pointer
       "
       onClick={() => {
-      setUserInfo({...userInfo, firstTimeLogin: false, bio: bio.bio, tags: bio.tags})
-      updateUserInfo()
+        router.push('/')
       }}
       >Skip</p>
       <button
         onClick={async() => {
+          if(bio.bio?.length > 140) {
+            toast.error("bio must be less than 140 characters")
+            return
+          } else {
           setUserInfo({...userInfo, firstTimeLogin: false, bio: bio.bio, tags: bio.tags})
           updateUserInfo()
+          }
        
         }}
       className="black-btn text-white w-[340px] mt-[24px] h-[68px]">

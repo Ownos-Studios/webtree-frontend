@@ -75,6 +75,9 @@ const Login: React.FC<indexProps> = ({}) => {
 
       setToken(response.data?.data?.token);
       setFirtTimeLogin(response.data?.data?.firstTimeLogin);
+      if(!response.data?.data?.firstTimeLogin){
+        setUserInfo(response.data?.data?.data);
+      }
       if (
         !response.data?.data?.firstTimeLogin &&
         response.data?.data?.data?.username?.length > 0
