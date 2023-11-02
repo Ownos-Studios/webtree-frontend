@@ -26,7 +26,7 @@ function ProfilePage() {
             tags={["Product design", "Game Design", "Web Dev"]}
             pfp={"/user.png"}
           />
-          <Requests />
+          {/* <Requests /> */}
         </div>
 
         <div className="flex flex-col w-[500px]">
