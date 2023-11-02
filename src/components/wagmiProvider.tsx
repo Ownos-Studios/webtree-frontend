@@ -1,4 +1,4 @@
-import { connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { connectorsForWallets, DisclaimerComponent, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 import {
     argentWallet,
@@ -60,12 +60,28 @@ const config = createConfig({
     webSocketPublicClient,
 });
 
+const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
+    <Text>
+      By connecting your wallet, you agree to the{' '}
+      <Link href="https://termsofservice.xyz">Terms of Service</Link> and
+      acknowledge you have read and understand the protocol{' '}
+      <Link href="https://disclaimer.xyz">Disclaimer</Link>
+    </Text>
+  );
+  
 function WagmiProvider(props: any) {
     return (
         <>
             {config && (
                 <WagmiConfig config={config}>
-                    <RainbowKitProvider chains={chains}>{props.children}</RainbowKitProvider>
+                    <RainbowKitProvider
+                    appInfo={{
+                        appName: 'Webtree',
+                        
+                    }}
+                    modalSize='compact'
+                    
+                    chains={chains}>{props.children}</RainbowKitProvider>
                 </WagmiConfig>
             )}
         </>

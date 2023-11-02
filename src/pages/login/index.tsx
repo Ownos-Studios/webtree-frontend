@@ -128,7 +128,7 @@ const Login: React.FC<indexProps> = ({}) => {
               <picture>
                 <img src={rainbowkit.src} alt="" />
               </picture>
-              Connect your Wallet
+               Login
             </button>
           ) : (
             <button
