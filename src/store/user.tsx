@@ -13,6 +13,7 @@ type userStore = {
         username: string;
         bio?: string;
         tags?: string[];
+        pfp?: string;
     } | object;
     setUserInfo: (userInfo: object) => void;
     firtTimeLogin: boolean;
@@ -35,6 +36,7 @@ export const useUserStore = create(
             username: "",
             bio: "",
             tags: [],
+            pfp: "",
         },
         setUserInfo: (userInfo: object) => set({ userInfo }),
         firtTimeLogin: false,
@@ -43,6 +45,7 @@ export const useUserStore = create(
       {
         name: 'webtree', 
         storage: createJSONStorage(() => localStorage), 
+       
       }
     )
   )

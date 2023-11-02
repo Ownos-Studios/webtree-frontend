@@ -377,7 +377,9 @@ const { setUserInfo, userInfo } = useUserStore();
           />
         </label>
       </span>
-      <p className="text-[18px] text-[#575A5C]"
+      <p className="text-[18px] text-[#575A5C]
+        cursor-pointer
+      "
       onClick={() => {
       setUserInfo({...userInfo, firstTimeLogin: false, bio: bio.bio, tags: bio.tags})
       updateUserInfo()

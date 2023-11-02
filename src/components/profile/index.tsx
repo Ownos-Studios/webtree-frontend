@@ -1,27 +1,46 @@
+import EditIcon from "@/assets/edit";
 import { useRouter } from "next/router";
 import React from "react";
+import PFPModal from "../modal/pfpModal";
+import useStore from "@/store/useStore";
+import { useUserStore } from "@/store/user";
 
 interface profileType {
   name: string;
   username: string;
   bio: string;
   company: string;
-  tags: string[];
+  tags: string[]; 
+  pfp: string | boolean;
 }
 
-function Profile({ name, username, bio, company, tags }: profileType) {
+function Profile({ name, username, bio, company, tags, pfp=false }: profileType) {
   const router = useRouter();
+  const [modal, setModal] = React.useState(false);
+  const token = useStore(useUserStore, (state) => state.token);
   return (
-    <div className="fles w-full">
+    <div className="flex w-full">
       <div className="relative flex flex-col rounded-[23.5px] p-[14.7px] w-full bg-[#D6E0EA]">
         {/* Profile Img */}
         <picture className="absolute right-[14.7px] top-[14.7px]">
-          <img
-            className="h-[79.5px] w-[79.5px] rounded-md border-[1.5px] border-black"
-            src="/user.png"
-            alt=""
-          />
-        </picture>
+  <img
+    className="h-36 w-36 rounded-md border-[1.5px] border-black"
+    src={pfp ?  pfp as string : "/user.png"}
+    alt=""
+  />
+  {
+    token && token?.length > 0 ?
+  
+  <button onClick={()=>{ setModal(true) }} className="w-[24px] h-[24px] bg-[#D6E0EA] p-[2px] rounded-[50%] cursor-pointer absolute right-0 bottom-0">
+ <EditIcon
+   
+  />
+  </button> : ""
+  }
+ 
+ 
+</picture>
+
 
         {/* Name */}
         <h1 className="text-[28px] font-semibold leading-7">{name}</h1>
@@ -71,6 +90,7 @@ function Profile({ name, username, bio, company, tags }: profileType) {
           </button>
         ) : ""}
       </div>
+      <PFPModal state={modal} setState={setModal} />
     </div>
   );
 }

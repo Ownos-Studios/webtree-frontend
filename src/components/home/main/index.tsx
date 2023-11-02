@@ -28,7 +28,7 @@ const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
 export default function Main() {
-  const { token, wallet } = useUserStore();
+  const { token, wallet,setUserInfo:localStore } = useUserStore();
   const { address } = useAccount();
   const [userInfo, setUserInfo] = useState<any>({
     userData: false,
@@ -36,18 +36,21 @@ export default function Main() {
   });
   const [modal, setModal] = useState(false);
   const parseProofs = (proofs: any) => {
+    
     switch (proofs?.type) {
       case "google-login":
         const data = proofs?.isVerified
           ? JSON.parse(proofs?.verification?.parameters)
           : false;
         return {
+          id: proofs?._id,
           type: "email",
           company: data?.emailAddress?.split("@")[1]?.split(".")[0] || false,
           name: data?.emailAddress?.split("@")[0] || false,
           email: data?.emailAddress || false,
           timestamp: proofs?.updatedAt,
           isVerified: proofs?.isVerified,
+          reVerifyRequest: proofs?.reVerifyRequest,
         };
       case "spotify-username":
         const spotify = proofs?.isVerified
@@ -55,12 +58,14 @@ export default function Main() {
           : false;
   
         return {
+          id: proofs?._id,
           type: "spotify",
           company: "spotify",
           name: spotify?.userName || false, 
           email: spotify?.userName || false, 
           timestamp: proofs?.updatedAt,
           isVerified: proofs?.isVerified,
+          reVerifyRequest: proofs?.reVerifyRequest,
         };
       
       default:
@@ -98,8 +103,11 @@ export default function Main() {
         userData: response?.data?.data?.user,
         proofs: dataCheck,
       });
+      localStore({...response?.data?.data?.user, pfp: response?.data?.data?.user?.pfp || false})
+
     } catch (error) {
       console.error(error); // Use console.error to log errors
+      window.localStorage.clear();
       window.location.href = "/";
     }
   };
@@ -251,9 +259,17 @@ export default function Main() {
               userInfo?.userData?.bio || false
             }
             tags={userInfo?.userData?.tags || undefined}
+            pfp={userInfo?.userData?.pfp || false}
           />
+          {
+            userInfo?.proofs?.length > 0 && 
+            userInfo?.proofs?.map((proof: any) => 
             
-          {/* <Requests /> */}
+                  <Requests data={proof} key={proof}/>
+              
+            )
+          }
+       
         </div>
 
         <div className="flex flex-col w-full">
@@ -266,7 +282,7 @@ export default function Main() {
               
                onClick={() => {
                 toast.success("Copied to clipboard")
-                window.navigator.clipboard.writeText(window.location.href)
+                window.navigator.clipboard.writeText(window.location.href + userInfo?.userData?.username)
               }}
               className="flex gap-1
               cursor-pointer

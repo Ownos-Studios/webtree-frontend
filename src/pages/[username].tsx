@@ -59,6 +59,7 @@ export default function Home() {
 
   
     const parseProofs = (proofs: any) => {
+     
       switch (proofs?.type) {
         case "google-login":
           const data = proofs?.isVerified
@@ -66,6 +67,7 @@ export default function Home() {
             : false;
           return {
             type: "email",
+            id: proofs?._id,
             company: data?.emailAddress?.split("@")[1]?.split(".")[0] || false,
             name: data?.emailAddress?.split("@")[0] || false,
             email:data?.emailAddress?.split("@")[1] || false,
@@ -79,6 +81,7 @@ export default function Home() {
     
           return {
             type: "spotify",
+            id: proofs?._id,
             company: "spotify",
             name: spotify?.userName || false, 
             email: spotify?.userName || false, 
@@ -132,10 +135,33 @@ export default function Home() {
   }
  
  
+  const requestReverification = async({wallet,id}: {
+    wallet: string,
+    id: string
+  }) => {
+    try{
+     
+      const response = await axios.post(`${BE_URL}reclaim/rerequest`,{
+        wallet,
+        id
+      },{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+     
+      toast.success("Requested for re-verification")
+    }
+    catch(error:any){
+      toast.error("Already requested for re-verification")
+      console.log(error)
+    }
+  }
 
 
 
   const Links = () => {
+    
     return (
       <>
           {userInfo && userInfo?.proofs?.length > 0 && userInfo?.proofs
@@ -143,7 +169,8 @@ export default function Home() {
             ?.map((proof: any) => {
               return (
                 <Link
-                  key={proof?.company || false}
+                  id={proof.id}
+                  key={proof.id}
                   type={proof?.type || false}
                   name={proof?.email || false}
                   isVerified={proof?.isVerified || false}
@@ -162,8 +189,14 @@ export default function Home() {
   
   const Link = (data:any) => {
     return (
+      <>
       <button className="flex flex-col db-border items-center py-[12px]  w-full"
-        onClick={() => {}}
+        onClick={() => 
+          
+          token && token?.length > 0 ?
+          requestReverification({wallet: address as string, id: data?.id})
+          : alert("Please Sign in to request re-verification")
+        }
       >
         <h1 className="flex items-center text-[18px] font-semibold">
           {/* <svg
@@ -184,6 +217,7 @@ export default function Home() {
         {data?.isVerified ? 
         <p className="text-[#18181880] text-[10px]">Verified on {new Date(data?.timestamp).toLocaleString()}</p> : "" }
       </button>
+      </>
     );
   };
   return (
@@ -216,6 +250,7 @@ export default function Home() {
                     userInfo?.userData?.bio?.length > 0 ? userInfo?.userData?.bio : " " 
                   }
                   tags={userInfo?.userData?.tags?.length > 0 ? userInfo?.userData?.tags : undefined}
+                  pfp={userInfo?.userData?.pfp || "/user.png"}
                 />
                   
                 {/* <Requests /> */}

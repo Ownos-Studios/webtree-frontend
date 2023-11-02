@@ -24,6 +24,7 @@ function ProfilePage() {
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }
             tags={["Product design", "Game Design", "Web Dev"]}
+            pfp={"/user.png"}
           />
           <Requests />
         </div>
