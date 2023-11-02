@@ -5,8 +5,10 @@ import axios from "axios";
 import { BE_URL } from "@/pages/_app";
 import { useUserStore } from "@/store/user";
 import useStore from "@/store/useStore";
+import toast, { Toaster } from "react-hot-toast";
 
-export const Requests = (data: any) => {
+export const Requests = ({data}: {data:any}) => {
+
   return (
     <div className="pt-3 absolute bottom-0 left-0 flex flex-col w-full max-w-[500px] bg-[#FCFFF7] border border-black rounded-t-[24px]">
       <span className="w-12 mx-auto h-2 bg-black rounded-xl"></span>
@@ -16,18 +18,21 @@ export const Requests = (data: any) => {
         </h1>
       </span>
       <div>
-        {console.log(data)}
-        {data?.data?.reVerifyRequest
-          ?.filter((v: any) => v.status === "pending")
-          ?.map((v: any) => (
-            <Req data={v} key={v} id={data?.data?.id} />
-          ))}
+      {
+        data?.map((item:any) => 
+          item?.reVerifyRequest?.map((req:any) =>
+            req?.status === "pending" &&
+            <Req data={req} id={item?.id} key={item?.id} name={item?.type} />
+          )
+        )
+      }
       </div>
     </div>
   );
 };
 
-function Req({ data, id }: { data: any; id: string }) {
+function Req({ data, id, name }: { data: any; id: string, name: string }) {
+  
   const token = useStore(useUserStore, (state) => state.token);
   const GetVerificationLink = async ({
     id,
@@ -58,12 +63,15 @@ function Req({ data, id }: { data: any; id: string }) {
     }
   };
   return (
+   <>
+   
+   <Toaster />
     <span className="flex items-center px-6 pb-2 border-b-2 mt-[20px]">
       <p className="max-[512px]:text-[14px]">
         <strong>
-          {data?.wallet?.slice(0, 6) + "..." + data?.wallet?.slice(-2)}
+          {data?.username ? `@${data?.username}` : data?.wallet?.slice(0, 4) + "..." + data?.wallet?.slice(-2)}
         </strong>{" "}
-        wants to verify your profle
+        wants to verify your {name} account
       </p>
       <span className="flex ml-auto gap-[30px]  max-[512px]:gap-3 ml-2">
         <button
@@ -88,17 +96,23 @@ function Req({ data, id }: { data: any; id: string }) {
           <Tick />
         </button>
         <button
-          onClick={async () =>
+          onClick={async () => {
             await GetVerificationLink({
               id: id,
               wallet: data?.wallet,
               status: "declined",
             })
+            toast.success("Declined");
+            // remove the id from the list
+            delete data.id; 
+
+          }
           }
         >
           <Close />
         </button>
       </span>
     </span>
+    </>
   );
 }

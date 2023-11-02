@@ -143,7 +143,7 @@ export default function Main() {
 
     setInterval(() => {
       fetchUserInfo();
-    }, 10000);
+    }, 5000);
   }, [token]);
 
   const Links = () => {
@@ -279,10 +279,14 @@ export default function Main() {
               pfp={userInfo?.userData?.pfp || false}
             />
             <span className="flex left-0 right-0 fixed w-[1048px]  max-[512px]:px-2 max-[1070px]:w-full max-[1070px]:max-w-[500px] mx-auto bottom-0 ">
-              {userInfo?.proofs?.length > 0 &&
-                userInfo?.proofs?.map((proof: any) => (
+              {/* {userInfo?.proofs?.length > 0 &&
+                userInfo?.proofs?.filter((proof: any) => proof?.isVerified)?.
+                map((proof: any) => (
                   <Requests data={proof} key={proof} />
-                ))}
+                ))} */}
+              <Requests
+              data={userInfo?.proofs?.filter((proof: any) => proof?.isVerified && proof?.reVerifyRequest?.length > 0 && proof?.reVerifyRequest?.filter((req: any) => req?.status === "pending"))} key={userInfo?.proofs?.filter((proof: any) => proof?.isVerified)}
+              />
             </span>
           </div>
 

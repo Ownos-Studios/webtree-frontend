@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 
 //assets
 import WebtreeLogo from "@/assets/logo/webtree";
@@ -11,7 +11,7 @@ import { ConnectButton, useConnectModal, Wallet } from "@rainbow-me/rainbowkit";
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
-import { useAccount, useSignMessage } from "wagmi";
+import { useAccount, useSignMessage, useSignTypedData } from "wagmi";
 
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -50,8 +50,8 @@ const Login: React.FC<indexProps> = ({}) => {
   const getNonce = async () => {
     try {
       const response = await axios.get(`${BE_URL}auth/nonce`);
-
-      signMessage({ message: response.data?.data?.nonce });
+      let message = `Click to Verify\n\nThis is a sign-in security verification for your Webtree account. This request does not trigger any transaction or cost any fees.\n\nClick to sign-in to Webtree.\n\nTechnical Data (ignore if not a power-user)\n\nWallet Address: ${address}\n\nNonce: ${response.data?.data?.nonce}`
+      signMessage({ message: message });
       // signer?.signMessage(response.data?.data?.nonce).then((data) => {
       //     createOrLogin({sign: data, nonce: response.data?.data?.nonce})
       // })
@@ -71,6 +71,7 @@ const Login: React.FC<indexProps> = ({}) => {
       const response = await axios.post(`${BE_URL}auth/login`, {
         sign: sign,
         nonce: nonce,
+        walletAddress: address,
       });
 
       setToken(response.data?.data?.token);
