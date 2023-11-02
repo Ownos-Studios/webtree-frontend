@@ -21,7 +21,7 @@ type platformType =
   | "linkedin"
   | "youtube"
   | "instagram"
-  | "spotify"
+  | "spotify";
 
 const socialIcons = {
   twitter: twitter.src,
@@ -68,7 +68,9 @@ function LinkBtn({
   );
 }
 
-export const AddMore = ({setModal}: {
+export const AddMore = ({
+  setModal,
+}: {
   setModal: (modal: boolean) => void;
 }) => {
   return (
@@ -95,7 +97,7 @@ export const AddMore = ({setModal}: {
             ></path>
           </svg>
         </picture>
-        <h3 className="text-[18px] font-semibold">Add even more</h3>
+        <h3 className="text-[18px] font-semibold">Add more</h3>
       </span>
     </div>
   );

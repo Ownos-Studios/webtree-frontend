@@ -1,10 +1,6 @@
 import React from "react";
 
-function EditIcon({
-  className,
-}: {
-  className?: string;
-}) {
+function EditIcon({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +9,6 @@ function EditIcon({
       strokeWidth="1.5"
       className={className}
       viewBox="0 0 24 24"
-
     >
       <path
         strokeLinecap="round"

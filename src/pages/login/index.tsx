@@ -7,7 +7,7 @@ import Google from "./../../assets/google";
 
 //fonts
 import { Inter, Familjen_Grotesk } from "next/font/google";
-import { ConnectButton, useConnectModal,Wallet } from "@rainbow-me/rainbowkit";
+import { ConnectButton, useConnectModal, Wallet } from "@rainbow-me/rainbowkit";
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
@@ -75,7 +75,7 @@ const Login: React.FC<indexProps> = ({}) => {
 
       setToken(response.data?.data?.token);
       setFirtTimeLogin(response.data?.data?.firstTimeLogin);
-      if(!response.data?.data?.firstTimeLogin){
+      if (!response.data?.data?.firstTimeLogin) {
         setUserInfo(response.data?.data?.data);
       }
       if (
@@ -97,17 +97,21 @@ const Login: React.FC<indexProps> = ({}) => {
     <section
       className={`${grotesk.className} flex w-full min-h-screen bg-[#F6FDFF] justify-center`}
     >
-      <div className="w-[340px] flex flex-col items-center mt-[135px]">
-        <span className="overflow-hidden w-[59.7px] h-[50.4px] flex  justify-center items-center">
+      <div className="w-[340px] flex flex-col items-center mt-[135px] max-[512px]:mt-0">
+        <span className="max-[512px]:hidden overflow-hidden w-[59.7px] h-[50.4px] flex  justify-center items-center">
           <WebtreeLogo />
         </span>
-        <h1 className={`text-[48px] font-bold mt-[130px]`}>Login your way</h1>
-        <p className="text-center text-[#575A5C]">
+        <h1
+          className={`text-[48px] font-bold mt-[130px] max-[512px]:mt-[55px] max-[512px]:w-[60%] max-[512px]:text-center max-[512px]:leading-[48px]`}
+        >
+          Login your way
+        </h1>
+        <p className="text-center text-[#575A5C] mt-3">
           Use either your Google account or your preferred Wallet to Sign into
           Webtree
         </p>
 
-        <span className="flex flex-col gap-y-4 text-[18px] font-semibold mt-[48px]">
+        <span className="flex flex-col gap-y-4 text-[18px] font-semibold mt-[48px] max-[512px]:mt-auto mb-6">
           {/* <button 
           className="cursor-pointer border-btn py-[22px] w-[340px] flex items-center justify-center gap-x-2">
             <Google />
@@ -118,7 +122,7 @@ const Login: React.FC<indexProps> = ({}) => {
               onClick={() => {
                 openConnectModal && openConnectModal();
               }}
-              className="cursor-pointer border-btn py-[22px]  w-[340px] flex items-center justify-center gap-x-2"
+              className="cursor-pointer border-btn py-[22px]  max-w-[340px] w-[95vw] flex items-center justify-center gap-x-2"
             >
               <picture>
                 <img src={rainbowkit.src} alt="" />

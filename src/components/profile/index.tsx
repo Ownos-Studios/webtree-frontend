@@ -10,67 +10,78 @@ interface profileType {
   username: string;
   bio: string;
   company: string;
-  tags: string[]; 
+  tags: string[];
   pfp: string | boolean;
 }
 
-function Profile({ name, username, bio, company, tags, pfp=false }: profileType) {
+function Profile({
+  name,
+  username,
+  bio,
+  company,
+  tags,
+  pfp = false,
+}: profileType) {
   const router = useRouter();
   const [modal, setModal] = React.useState(false);
   const token = useStore(useUserStore, (state) => state.token);
   return (
-    <div className="flex w-full">
-      <div className="relative flex flex-col rounded-[23.5px] p-[14.7px] w-full bg-[#D6E0EA]">
+    <div className="flex w-full h-max">
+      <div className="relative flex flex-col rounded-[23.5px] p-[14.7px] w-[500px]  max-[512px]:w-[95vw] bg-[#D6E0EA]">
         {/* Profile Img */}
         <picture className="absolute right-[14.7px] top-[14.7px]">
-  <img
-    className="h-36 w-36 rounded-md border-[1.5px] border-black"
-    src={pfp ?  pfp as string : "/user.png"}
-    alt=""
-  />
-  {
-    token && token?.length > 0 ?
-  
-  <button onClick={()=>{ setModal(true) }} className="w-[24px] h-[24px] bg-[#D6E0EA] p-[2px] rounded-[50%] cursor-pointer absolute right-0 bottom-0">
- <EditIcon
-   
-  />
-  </button> : ""
-  }
- 
- 
-</picture>
-
+          <img
+            className="h-[79.4px] w-[79.4px]  max-[512px]:h-[54px]  max-[512px]:w-[54px] rounded-md border-[1.5px] border-black"
+            src={pfp ? (pfp as string) : "/user.png"}
+            alt=""
+          />
+          {token && token?.length > 0 ? (
+            <button
+              onClick={() => {
+                setModal(true);
+              }}
+              className="max-[512px]:w-[14px] max-[512px]:h-[14px] w-[24px]  h-[24px] bg-[#d6e0ea93] p-[4px] rounded-[50%] cursor-pointer absolute right-0 bottom-0"
+            >
+              <EditIcon />
+            </button>
+          ) : (
+            ""
+          )}
+        </picture>
 
         {/* Name */}
-        <h1 className="text-[28px] font-semibold leading-7">{name}</h1>
+        <h1 className="text-[28px] max-[512px]:text-[20px] font-semibold leading-7">
+          {name}
+        </h1>
         {/* username */}
-        <p className="mt-4 flex justify-center items-center w-min text-[20px] px-3 py-[6px] font-semibold rounded-[235px] text-[#6E0BAB] bg-[#FFFFFF80]">
+        <p className="mt-4 flex justify-center items-center w-min text-[20px]  max-[512px]:text-[14px] px-3 py-[6px] font-semibold rounded-[235px] text-[#6E0BAB] bg-[#FFFFFF80]">
           @{username}
         </p>
         {/* bio */}
-        <span className="flex gap-2 mt-[20px]">
+        <span className="flex gap-2 mt-[20px]  max-[512px]:mt-[18px]">
           {bio ? (
             <>
               <p>{bio}</p>
             </>
-          ) : 
-          (
+          ) : (
             <>
               <button
-              onClick={()=>{ router.push('/user/onboard') }}
-              className="bg-white p-[6px] rounded-[24px] text-[#575A5C] px-3">
+                onClick={() => {
+                  router.push("/user/onboard");
+                }}
+                className="bg-white p-[6px] max-[512px]:text-[12px] max-[512px]:py-2 min-w-max rounded-[24px] text-[#575A5C] px-3"
+              >
                 + Add Bio
               </button>
               <Placeholder />
             </>
-          )
-        
-        }
+          )}
         </span>
-        <span className="flex items-center gap-2 mt-[18.8px]">
-          <h3 className="text-[#575A5C] text-[24px] font-semibold">Works</h3>
-          <h2 className="font-semibold text-[24px]">
+        <span className="flex items-center gap-2 mt-[18.8px]  max-[512px]:mt-[13px]">
+          <h3 className="text-[#575A5C] text-[24px]  max-[512px]:text-[16px] font-semibold">
+            Works
+          </h3>
+          <h2 className="font-semibold text-[24px]  max-[512px]:text-[16px]">
             {company ? `@ ${company}` : "@Add your company"}
           </h2>
         </span>
@@ -80,15 +91,18 @@ function Profile({ name, username, bio, company, tags, pfp=false }: profileType)
               return <Tag title={ele} key={key + "tag"} />;
             })}
           </span>
-        ) :
-        tags !== undefined ?
-        (
+        ) : tags !== undefined ? (
           <button
-          onClick={()=>{ router.push('/user/onboard') }}
-          className="mt-[12px] bg-white p-[6px] rounded-[24px] w-fit text-[#575A5C] px-3 border border-[#A5BCB0]">
+            onClick={() => {
+              router.push("/user/onboard");
+            }}
+            className="mt-[12px] bg-white p-[6px] rounded-[24px] w-fit text-[#575A5C] px-3 border border-[#A5BCB0]"
+          >
             + Add Tags
           </button>
-        ) : ""}
+        ) : (
+          ""
+        )}
       </div>
       <PFPModal state={modal} setState={setModal} />
     </div>
@@ -97,7 +111,7 @@ function Profile({ name, username, bio, company, tags, pfp=false }: profileType)
 
 const Tag = ({ title }: { title: string }) => {
   return (
-    <span className="text-[18px] w-fit text-[#575A5C] font-medium bg-white p-[11.5px] px-[14px] rounded-[23.4px] border-[#A5BCB0] border-[1.5px]">
+    <span className="text-[18px]  max-[512px]:text-[14px] w-fit text-[#575A5C] font-medium bg-white p-[11.5px] px-[14px] rounded-[23.4px] border-[#A5BCB0] border-[1.5px]  max-[512px]:p-2">
       {title}
     </span>
   );
