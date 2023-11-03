@@ -21,11 +21,15 @@ import { ParticleNetwork } from '@particle-network/auth';
 import { arbitrum, mainnet, optimism, polygon } from 'wagmi/chains';
 
 import { particleWallet } from '@particle-network/rainbowkit-ext';
+import { rainbowMagicConnector } from '@/lib/rainbowMagicConnector';
 
 new ParticleNetwork({
     projectId: "6e9f1995-12bd-4fc7-bb4f-9ac5a17764c5",
     clientKey: "cXMAWBIWenpw7WK4QxLZC3RKgY3we61mTfEydAUh",
     appId: "a0ef3f11-e636-4f5f-9043-e7a28ba9369b",
+    securityAccount: {
+        promptSettingWhenSign:false,
+    }
 });
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -41,9 +45,10 @@ const popularWallets = {
     groupName: 'Popular',
     wallets: [
         ...particleWallets,
+        rainbowMagicConnector({ chains }),
         injectedWallet({ chains }),
         rainbowWallet({ chains, projectId: "e5b68846a895ba1454361f23780e981a" }),
-        coinbaseWallet({ appName: 'RainbowKit demo', chains }),
+        coinbaseWallet({ appName: 'webtreee', chains }),
         metaMaskWallet({ chains, projectId: "e5b68846a895ba1454361f23780e981a" }),
         walletConnectWallet({ chains, projectId: "e5b68846a895ba1454361f23780e981a" }),
     ],
