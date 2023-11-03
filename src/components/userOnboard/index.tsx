@@ -51,12 +51,13 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
   }, [nameExists, usernameExists]);
 
   const updateUserBio = async () => {
+    console.log("updating user bio",bio);
     try {
       const res = await axios.post(
         `${BE_URL}user/updateBio`,
         {
-          bio: bio.bio,
-          tags: bio.tags,
+          bio: bio.bio || "",
+          tags: bio.tags || [],
         },
         {
           headers: {
@@ -69,6 +70,7 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
         toast.success("user info updated");
         router.push("/");
       }
+      
     } catch (error) {
       console.log(error);
     }
@@ -411,7 +413,8 @@ const BioPick = ({
           if (bio.bio?.length > 140) {
             toast.error("bio must be less than 140 characters");
             return;
-          } else {
+          }
+          else {
             setUserInfo({
               ...userInfo,
               firstTimeLogin: false,
