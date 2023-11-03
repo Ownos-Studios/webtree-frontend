@@ -113,6 +113,8 @@ const UsernamePick = ({
     username: string;
   }) => {
     try {
+      console.log("updating user info");
+      console.log(firstName, lastName, username);
       const res = await axios.post(
         `${BE_URL}user/update`,
         {

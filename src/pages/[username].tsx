@@ -193,9 +193,14 @@ export default function Home() {
       <button className="flex flex-col db-border items-center py-[12px]  w-full"
         onClick={() => 
           
-          token && token?.length > 0 ?
+          token && token?.length > 0  &&
+           address !== userInfo?.userData?.wallet
+          ?
           requestReverification({wallet: address as string, id: data?.id})
-          : alert("Please Sign in to request re-verification")
+          : 
+            address === userInfo?.userData?.wallet ? 
+            alert("You cannot request re-verification for your own account") :
+          alert("Please Sign in to request re-verification")
         }
       >
         <h1 className="flex items-center text-[18px] font-semibold">
