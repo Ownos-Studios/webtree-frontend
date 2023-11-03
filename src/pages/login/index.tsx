@@ -140,7 +140,7 @@ const Login: React.FC<indexProps> = ({}) => {
               <picture>
                 <img src={rainbowkit.src} alt="" />
               </picture>
-              Please Sign the message to login
+              Please Verify Login
             </button>
           )}
         </span>
