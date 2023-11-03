@@ -20,7 +20,7 @@ import { useUserStore } from "@/store/user";
 import { useEffect, useState } from "react";
 const BE_URL = process.env.BE_URL;
 import toast, { Toaster } from "react-hot-toast";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Modal from "@/components/modal";
 
@@ -393,6 +393,8 @@ export default function Main() {
 }
 
 const Nav = () => {
+ const { disconnect } = useDisconnect();
+
   return (
     <span className="flex mt-[25px] w-[1048px]  max-[512px]:px-2 max-[1070px]:w-full max-[1070px]:max-w-[500px] mx-auto mb-[36px]">
       <span className="flex justify-between w-full items-center">
@@ -415,8 +417,13 @@ const Nav = () => {
         <button
           className="black-btn text-white h-9 px-4"
           onClick={() => {
+            disconnect();
             window.localStorage.clear();
-            window.location.href = "/";
+            // wait for one second
+            setTimeout(() => {
+           
+              window.location.href = "/";
+            }, 1000);
           }}
         >
           Logout

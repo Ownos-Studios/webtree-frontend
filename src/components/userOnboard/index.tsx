@@ -48,7 +48,7 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
     } else if (usernameExists && nameExists) {
       setstep(steps.SET_BIO);
     }
-  }, [nameExists, usernameExists]);
+  }, [nameExists, router, token?.length, usernameExists]);
 
   const updateUserBio = async () => {
     console.log("updating user bio",bio);

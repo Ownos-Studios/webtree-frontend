@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import WagmiProvider from "@/components/wagmiProvider";
+import WagmiProvider from "@/lib/wagmiProvider";
 
 // const config = createConfig(
 //   getDefaultConfig({

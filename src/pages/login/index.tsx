@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 //assets
 import WebtreeLogo from "@/assets/logo/webtree";
@@ -11,13 +11,17 @@ import { ConnectButton, useConnectModal, Wallet } from "@rainbow-me/rainbowkit";
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
-import { useAccount, useSignMessage, useSignTypedData } from "wagmi";
+import { useAccount, useConnect, useSignMessage, useSignTypedData } from "wagmi";
 
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useUserStore } from "@/store/user";
 import { BE_URL } from "@/pages/_app";
 import useStore from "@/store/useStore";
+import Loader from "@/components/modal/loader";
+import { Connector  } from 'wagmi/connectors'
+import { disconnect } from "process";
+
 
 interface indexProps {}
 
@@ -30,21 +34,27 @@ const Login: React.FC<indexProps> = ({}) => {
     setUserInfo,
     userInfo,
   } = useUserStore();
-
+  const [loader, setLoader] = useState<boolean>(false);
   const { address } = useAccount();
   const router = useRouter();
+  
+  
 
-  useEffect(() => {
-    if (address && token?.length > 0) {
-      //@ts-ignore
-      firtTimeLogin ? router.push("/user/onboard") : router.push(`/`);
-    }
-  }, [token, router, firtTimeLogin, address, userInfo]);
+  
+  // useEffect(() => {
+  //   if (address && token?.length > 0) {
+  //     //@ts-ignore
+  //     firtTimeLogin && !userInfo?.username?.length > 0 ? router.push("/user/onboard") : router.push(`/`);
+  //   }
+  // }, [token, router, firtTimeLogin, address, userInfo]);
 
   const { data, error, isLoading, signMessage } = useSignMessage({
     onSuccess: (data, variables) => {
       createOrLogin({ sign: data, nonce: variables.message });
     },
+    onError: (error) => {
+      setLoader(false);
+    }
   });
 
   const getNonce = async () => {
@@ -52,6 +62,7 @@ const Login: React.FC<indexProps> = ({}) => {
       const response = await axios.get(`${BE_URL}auth/nonce`);
       let message = `Click to Verify\n\nThis is a sign-in security verification for your Webtree account. This request does not trigger any transaction or cost any fees.\n\nClick to sign-in to Webtree.\n\nTechnical Data (ignore if not a power-user)\n\nWallet Address: ${address}\n\nNonce: ${response.data?.data?.nonce}`
       signMessage({ message: message });
+      setLoader(true);
       // signer?.signMessage(response.data?.data?.nonce).then((data) => {
       //     createOrLogin({sign: data, nonce: response.data?.data?.nonce})
       // })
@@ -76,18 +87,22 @@ const Login: React.FC<indexProps> = ({}) => {
 
       setToken(response.data?.data?.token);
       setFirtTimeLogin(response.data?.data?.firstTimeLogin);
+      setLoader(false);
       if (!response.data?.data?.firstTimeLogin) {
         setUserInfo(response.data?.data?.data);
       }
       if (
         !response.data?.data?.firstTimeLogin &&
-        response.data?.data?.data?.username?.length > 0
+        response.data?.data?.data?.username?.length > 0 &&
+        response.data?.data?.data?.firstName?.length > 0 &&
+        response.data?.data?.data?.lastName?.length > 0
       ) {
         router.push(`/`);
       } else {
         router.push("/user/onboard");
       }
     } catch (error) {
+      setLoader(false);
       console.log(error);
     }
   };
@@ -112,13 +127,14 @@ const Login: React.FC<indexProps> = ({}) => {
           Webtree
         </p>
 
+
         <span className="flex flex-col gap-y-4 text-[18px] font-semibold mt-[48px] max-[512px]:mt-auto mb-6">
-          {/* <button 
-          className="cursor-pointer border-btn py-[22px] w-[340px] flex items-center justify-center gap-x-2">
-            <Google />
-            Sign in with Google
-          </button> */}
+          
+
+          
+        
           {!address ? (
+            <>
             <button
               onClick={() => {
                 openConnectModal && openConnectModal();
@@ -130,6 +146,7 @@ const Login: React.FC<indexProps> = ({}) => {
               </picture>
                Login
             </button>
+            </>
           ) : (
             <button
               onClick={() => {
@@ -145,6 +162,7 @@ const Login: React.FC<indexProps> = ({}) => {
           )}
         </span>
       </div>
+      {loader && <Loader/>}
     </section>
   );
 };
