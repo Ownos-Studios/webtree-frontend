@@ -34,7 +34,9 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
 
             <p
               onClick={() => setState(false)}
-              className="flex items-center justify-center gap-2"
+              className="flex items-center justify-center gap-2
+              cursor-pointer
+              "
             >
               <BackBtn />
               Back
@@ -48,7 +50,8 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
             text-black
             "
             >
-             Available Providers (more coming soon)
+              
+             More Data Providers Coming Soon
             </h1>
           )}
           {providers?.length === 0 && (
@@ -57,7 +60,7 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
             text-center mt-12
             "
             >
-              More providers coming soon
+              More Data Providers Coming Soon
             </h1>
           )}
         </div>

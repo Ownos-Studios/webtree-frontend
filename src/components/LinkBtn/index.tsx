@@ -9,6 +9,8 @@ import discord from "./../../assets/svg/platformIcons/discord.svg";
 import github from "./../../assets/svg/platformIcons/github.svg";
 import linkedin from "./../../assets/svg/platformIcons/linkedin.svg";
 import youtube from "./../../assets/svg/platformIcons/youtube.svg";
+import instagram from "./../../assets/svg/platformIcons/instagram.svg";
+import spotify from "./../../assets/svg/platformIcons/spotify.svg";
 
 type platformType =
   | "twitter"
@@ -33,8 +35,8 @@ const socialIcons = {
   github: github.src,
   linkedin: linkedin.src,
   youtube: youtube.src,
-  instagram: web.src,
-  spotify: web.src,
+  instagram: instagram.src,
+  spotify: spotify.src,
 };
 
 function LinkBtn({
@@ -60,7 +62,7 @@ function LinkBtn({
             alt=""
           />
         </picture>
-        <h3 className="text-[18px] font-semibold">{platform}</h3>
+        <h3 className="text-[18px] font-semibold">{platform?.charAt(0)?.toLocaleUpperCase() + platform?.slice(1)}</h3>
       </span>
 
       {/* <p className="text-[10px] mt-1 text-[#18181880]">Verified on 12.09.23</p> */}
