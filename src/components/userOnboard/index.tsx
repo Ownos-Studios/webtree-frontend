@@ -318,7 +318,7 @@ const BioPick = ({
       <span className="flex flex-col mt-[48px]">
         <label htmlFor="">
           <p className="text-[14px] text-[#575A5C]">
-            You can select up to 4 tags
+           Tell us what you do with Tags (max 4)
           </p>
           <div className="flex flex-row  mt-2  gap-2">
             <input
@@ -387,11 +387,11 @@ const BioPick = ({
           })}
         </div>
         <label htmlFor="">
-          <p className="text-[14px] text-[#575A5C]">Write a Bio</p>
+          <p className="text-[14px] text-[#575A5C]">Describe Yourself!</p>
           <textarea
             rows={3}
             className="rounded-[12px] bg-[#D6E0EA]  w-[340px] px-[12px]"
-            placeholder="Start"
+            placeholder="Enter your bio"
             required
             value={bio.bio}
             onChange={(e) => setBio({ ...bio, bio: e.target.value })}

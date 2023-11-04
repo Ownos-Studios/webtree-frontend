@@ -260,7 +260,7 @@ export default function Main() {
           <div className="flex">
             <Profile
               name={
-                userInfo?.userData?.firstName + userInfo?.userData?.lastName ||
+                userInfo?.userData?.firstName + " " + userInfo?.userData?.lastName ||
                 ""
               }
               company={
@@ -277,6 +277,7 @@ export default function Main() {
               bio={userInfo?.userData?.bio || false}
               tags={userInfo?.userData?.tags || undefined}
               pfp={userInfo?.userData?.pfp || false}
+              edit={true}
             />
             <span className="flex left-0 right-0 fixed w-[1048px]  max-[512px]:px-2 max-[1070px]:w-full max-[1070px]:max-w-[500px] mx-auto bottom-0 ">
               {/* {userInfo?.proofs?.length > 0 &&
@@ -292,11 +293,18 @@ export default function Main() {
 
           <div className="flex flex-col w-[500px] max-[512px]:border-t-[1.5px] pt-4 pb-2 border-black  max-[512px]:w-[95vw]">
             <span className="flex w-full justify-between">
-              <h1 className="font-medium text-[24px]">My Links</h1>
+              <h1 className="font-medium text-[24px]">My Links   
+              </h1>
+              
+              
               <span className="flex gap-4">
+              {userInfo?.proofs && userInfo?.proofs?.length > 0 && (
+                   userInfo?.proofs?.filter((proof: any) => proof?.isVerified).length)
+                }     
+                
                 <p
                   onClick={() => {
-                    toast.success("Copied to clipboard");
+                    toast.success("Link copied to clipboard");
                     window.navigator.clipboard.writeText(
                       window.location.href + userInfo?.userData?.username ?? ""
                     );

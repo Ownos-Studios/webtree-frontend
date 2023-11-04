@@ -8,7 +8,10 @@ import useStore from "@/store/useStore";
 import toast, { Toaster } from "react-hot-toast";
 
 export const Requests = ({data}: {data:any}) => {
-
+  let noOfReq = data?.map((item:any) => 
+    item?.reVerifyRequest?.filter((req:any) => req?.status === "pending").length 
+    )
+  console.log(noOfReq);
   return (
     <div className="pt-3 absolute bottom-0 left-0 flex flex-col w-full max-w-[500px] bg-[#FCFFF7] border border-black rounded-t-[24px]">
       <span className="w-12 mx-auto h-2 bg-black rounded-xl"></span>
@@ -16,6 +19,9 @@ export const Requests = ({data}: {data:any}) => {
         <h1 className="text-[30px]  max-[512px]:text-[24px] font-bold">
           Verification Requests
         </h1>
+        <p className="text-[18px]  max-[512px]:text-[14px] font-bold">
+          {noOfReq}
+        </p>
       </span>
       <div>
       {

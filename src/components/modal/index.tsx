@@ -29,7 +29,7 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
         >
           <span className="flex w-full justify-between py-8">
             <h1 className="text-[24px] font-medium max-[512px]:text-[18px]">
-              Avilable Providers
+              Available Providers 
             </h1>
 
             <p
@@ -48,7 +48,7 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
             text-black
             "
             >
-              Availabe providers (more coming soon)
+             Available Providers (more coming soon)
             </h1>
           )}
           {providers?.length === 0 && (

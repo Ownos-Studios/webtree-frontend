@@ -25,6 +25,7 @@ function ProfilePage() {
             }
             tags={["Product design", "Game Design", "Web Dev"]}
             pfp={"/user.png"}
+            edit={false}
           />
           {/* <Requests /> */}
         </div>

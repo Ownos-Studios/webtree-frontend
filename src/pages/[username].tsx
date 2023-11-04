@@ -7,7 +7,7 @@ import { User } from "../components/User"
 
 import axios from "axios";
 import { useUserStore } from "@/store/user";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import { BE_URL } from "./_app";
 import toast, { Toaster } from "react-hot-toast";
@@ -239,7 +239,7 @@ export default function Home() {
             <section className="flex lg:flex-row flex-col mt-[36px] gap-12 p-4 md:p-0">
               <div className="flex flex-col w-full">
                 <Profile
-                  name={userInfo?.userData?.firstName + userInfo?.userData?.lastName || ""}
+                  name={userInfo?.userData?.firstName + " " + userInfo?.userData?.lastName || ""}
                   company={
                     (userInfo?.proofs?.length > 0 &&
                       userInfo?.proofs?.find(
@@ -256,6 +256,7 @@ export default function Home() {
                   }
                   tags={userInfo?.userData?.tags?.length > 0 ? userInfo?.userData?.tags : undefined}
                   pfp={userInfo?.userData?.pfp || "/user.png"}
+                  edit={false}
                 />
                   
                 {/* <Requests /> */}
@@ -265,12 +266,14 @@ export default function Home() {
                 <span className="flex w-full justify-between">
                   <h1 className="font-medium text-[24px]">My Links</h1>
                   <span
-                 
                   className="flex gap-4">
+                    {userInfo?.proofs && userInfo?.proofs?.length > 0 && (
+                   userInfo?.proofs?.filter((proof: any) => proof?.isVerified).length)
+                }     
                     <p
                     
                      onClick={() => {
-                      toast.success("Copied to clipboard")
+                      toast.success("Link copied to clipboard")
                       window.navigator.clipboard.writeText(window.location.href)
                     }}
                     className="flex gap-1
@@ -300,6 +303,17 @@ export default function Home() {
                   </span>
                 </span>
                 <span className="flex flex-col mt-6 gap-3">
+                {userInfo?.proofs && (
+                   userInfo?.proofs?.length === 0 ?
+                  <h1
+                  className="text-md text-black font-bold
+                text-center mt-12
+                "
+                >
+                 {'None Added Yet :('}
+                </h1> : "")
+                }     
+
                   <Links />
                  
                 </span>

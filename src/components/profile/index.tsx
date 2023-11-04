@@ -4,6 +4,7 @@ import React from "react";
 import PFPModal from "../modal/pfpModal";
 import useStore from "@/store/useStore";
 import { useUserStore } from "@/store/user";
+import { useAccount } from "wagmi";
 
 interface profileType {
   name: string;
@@ -12,6 +13,7 @@ interface profileType {
   company: string;
   tags: string[];
   pfp: string | boolean;
+  edit: boolean;
 }
 
 function Profile({
@@ -21,6 +23,7 @@ function Profile({
   company,
   tags,
   pfp = false,
+  edit = false,
 }: profileType) {
   const router = useRouter();
   const [modal, setModal] = React.useState(false);
@@ -35,7 +38,7 @@ function Profile({
             src={pfp ? (pfp as string) : "/user.png"}
             alt=""
           />
-          {token && token?.length > 0 ? (
+          {token && token?.length > 0 && edit ? (
             <button
               onClick={() => {
                 setModal(true);

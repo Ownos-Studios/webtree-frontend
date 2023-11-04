@@ -97,7 +97,7 @@ export const AddMore = ({
             ></path>
           </svg>
         </picture>
-        <h3 className="text-[18px] font-semibold">Add more</h3>
+        <h3 className="text-[18px] font-semibold">Add More</h3>
       </span>
     </div>
   );
