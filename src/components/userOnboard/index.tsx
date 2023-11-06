@@ -31,11 +31,29 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
   const usernameExists = userInfo?.username?.length > 0;
   const [currentstep, setstep] = useState(steps.SET_BIO);
   const token = useStore(useUserStore, (state) => state.token) as string;
+
   const [bio, setBio] = useState<any>({
-    bio: "",
-    tags: [],
+    bio: userInfo?.bio || "",
+    tags: userInfo?.tags || [],
     newTag: "",
   });
+
+  let update = false;
+
+  useEffect(() => {
+    if(!update){
+    setBio({
+      bio: userInfo?.bio || "",
+      tags: userInfo?.tags || [],
+      newTag: "",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    update = true;
+  }
+  }, [userInfo]);
+  
+
+ 
 
   useEffect(() => {
     if (token?.length < 1) {
@@ -306,7 +324,6 @@ const BioPick = ({
 }) => {
   const { setUserInfo, userInfo } = useUserStore();
   const router = useRouter();
-
   return (
     <div className="flex flex-col w-[340px] items-center">
       <h1 className={"text-[48px] font-bold text-center"}>

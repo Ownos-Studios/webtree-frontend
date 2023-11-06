@@ -112,10 +112,12 @@ export default function Main() {
         ...response?.data?.data?.user,
         pfp: response?.data?.data?.user?.pfp || false,
       });
-    } catch (error) {
+    } catch (error:any) {
       console.error(error); // Use console.error to log errors
-      window.localStorage.clear();
-      window.location.href = "/";
+      if(error?.response?.status === 401){
+        window.localStorage.clear();
+        window.location.href = "/";
+      }
     }
   };
 
@@ -140,11 +142,17 @@ export default function Main() {
 
   useEffect(() => {
     fetchUserInfo();
+    return () => {};
+  }, [token]);
 
-    setInterval(() => {
+  useEffect(() => {
+    
+    const interval = setInterval(() => {
       fetchUserInfo();
     }, 5000);
-  }, [token]);
+    return () => clearInterval(interval);
+
+  }, [fetchUserInfo, token]);
 
   const Links = () => {
     const emailProofs = userInfo?.proofs?.filter((proof: any) => {
