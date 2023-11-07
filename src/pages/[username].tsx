@@ -318,7 +318,22 @@ export default function Home() {
                  
                 </span>
               </div>
+             
             </section> }
+            {
+          !token &&
+         
+         <button className="flex items-center justify-center text-white rounded-full px-12 py-4 
+          absolute bottom-0 left-0 right-0 mx-auto mb-2 w-[fit-content]
+          bg-black
+         "
+        onClick={() =>{
+          window.localStorage.clear();
+          window.location.href = "/"
+        } }
+        >
+          Create your own Webtree
+        </button> }
                   </div>
     </>
   );
