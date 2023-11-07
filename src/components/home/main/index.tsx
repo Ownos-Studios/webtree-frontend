@@ -23,6 +23,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useAccount, useDisconnect } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Modal from "@/components/modal";
+import { fetchSpotifyUsername } from "@/lib/spotifyUser";
 
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
@@ -103,6 +104,20 @@ export default function Main() {
           }
         }
       });
+
+      let spotify = await dataCheck?.find((v: any) => v?.type === "spotify" && v?.isVerified);
+      if(spotify){
+        console.log(spotify)
+        const spotifyUsername = await fetchSpotifyUsername(spotify?.email)
+        if(spotifyUsername){
+          spotify = {
+            ...spotify,
+            name: spotifyUsername,
+            email: spotifyUsername
+          }
+          dataCheck = dataCheck?.map((v: any) => v?.type === "spotify" ? spotify : v)
+        }
+      }
 
       setUserInfo({
         userData: response?.data?.data?.user,

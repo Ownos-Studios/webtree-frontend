@@ -25,7 +25,7 @@ type platformType =
   | "instagram"
   | "spotify";
 
-const socialIcons = {
+export const socialIcons = {
   twitter: twitter.src,
   mail: mail.src,
   web: web.src,
@@ -37,6 +37,7 @@ const socialIcons = {
   youtube: youtube.src,
   instagram: instagram.src,
   spotify: spotify.src,
+  email: mail.src,
 };
 
 function LinkBtn({

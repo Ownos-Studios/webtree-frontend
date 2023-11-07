@@ -1,5 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
-
+ // eslint-disable-next-line @next/next/no-img-element
 
 import Image from "next/image";
 import { Inter, Familjen_Grotesk } from "next/font/google";
@@ -16,6 +17,8 @@ import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
 import useStore from "@/store/useStore";
 import Profile from "@/components/profile";
+import { fetchSpotifyUsername } from "@/lib/spotifyUser";
+import { socialIcons } from "@/components/LinkBtn";
 
 
 
@@ -58,7 +61,7 @@ export default function Home() {
 
 
   
-    const parseProofs = (proofs: any) => {
+    const parseProofs = async(proofs: any) => {
      
       switch (proofs?.type) {
         case "google-login":
@@ -78,13 +81,12 @@ export default function Home() {
           const spotify = proofs?.isVerified
             ? JSON.parse(proofs?.verification?.parameters)
             : false;
-    
           return {
             type: "spotify",
             id: proofs?._id,
             company: "spotify",
-            name: spotify?.userName || false, 
-            email: spotify?.userName || false, 
+            name: spotify?.userName || false,
+            email:  spotify?.userName || false, 
             timestamp: proofs?.updatedAt,
             isVerified: proofs?.isVerified,
           };
@@ -107,22 +109,36 @@ export default function Home() {
 
     
       let dataCheck: any[] = []; // Initialize as an empty array
-      response?.data?.data?.proofs?.forEach((proof: any) => {
+      await response?.data?.data?.proofs?.forEach(async(proof: any) => {
       
         if (proof?.type !== "google-login") {
           if (proof?.isVerified) {
-            const parsedProof = parseProofs(proof);
+            const parsedProof = await parseProofs(proof);
             if (parsedProof) {
               dataCheck.push(parsedProof);
             }
           }
         } else {
-          const parsedProof = parseProofs(proof);
+          const parsedProof = await parseProofs(proof);
           if (parsedProof) {
             dataCheck.push(parsedProof);
           }
         }
       });
+      // check if spotify username is verified
+      let spotify = await dataCheck?.find((v: any) => v?.type === "spotify" && v?.isVerified);
+      if(spotify){
+        console.log(spotify)
+        const spotifyUsername = await fetchSpotifyUsername(spotify?.email)
+        if(spotifyUsername){
+          spotify = {
+            ...spotify,
+            name: spotifyUsername,
+            email: spotifyUsername
+          }
+          dataCheck = dataCheck?.map((v: any) => v?.type === "spotify" ? spotify : v)
+        }
+      }
       await setUserInfo({
         userData: response?.data?.data?.user,
         proofs: dataCheck,
@@ -203,7 +219,12 @@ export default function Home() {
           alert("Please Sign in to request re-verification")
         }
       >
+        
         <h1 className="flex items-center text-[18px] font-semibold">
+       
+        <img
+            className="w-6 h-6 object-contain mr-2"
+            src={socialIcons[data?.type as keyof typeof socialIcons] || socialIcons["web"]} alt="" />
           {/* <svg
             className="mr-2"
             xmlns="http://www.w3.org/2000/svg"
