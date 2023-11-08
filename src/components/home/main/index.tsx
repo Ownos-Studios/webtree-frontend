@@ -113,7 +113,6 @@ export default function Main() {
           spotify = {
             ...spotify,
             name: spotifyUsername,
-            email: spotifyUsername
           }
           dataCheck = dataCheck?.map((v: any) => v?.type === "spotify" ? spotify : v)
         }
@@ -188,7 +187,8 @@ export default function Main() {
               <Link
                 key={proof?.company || false}
                 type={proof?.type || false}
-                name={proof?.email || false}
+                name={proof?.name || false}
+                email={proof?.email || false}
                 isVerified={proof?.isVerified || false}
                 timestamp={proof?.timestamp || false}
               />
@@ -227,7 +227,11 @@ export default function Main() {
               ? window.open(url, "_top")
               : window.open(url, "_blank");
           } else {
+            if(data?.type === "spotify"){
+              window.open(`https://open.spotify.com/user/${data?.email}`, "_top")
+            } else{
             toast.success("You are already verified");
+            }
           }
         }}
       >
