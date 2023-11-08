@@ -262,11 +262,11 @@ const NamePick = ({
       </p>
       <span className="flex flex-col mt-[48px]">
         <label htmlFor="">
-          <h1 className="text-[20px]">Firstname</h1>
+          <h1 className="text-[20px]">first name</h1>
           <input
             className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
             type="text"
-            placeholder="Enter firstname"
+            placeholder="Enter first name"
             required
             value={userState.firstName}
             onChange={(e) =>
@@ -276,7 +276,7 @@ const NamePick = ({
         </label>
 
         <label className="mt-[18px]" htmlFor="">
-          <h1 className="text-[20px]">Lastname</h1>
+          <h1 className="text-[20px]">last name</h1>
           <input
             className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
             type="text"
@@ -364,7 +364,7 @@ const BioPick = ({
                 }
               }}
             />
-            {/* <button
+            <button
           className="w-1/4 bg-black text-white rounded-[12px] h-[48px] text-[#575A5C]"
             onClick={() => {
               if (bio.newTag?.length > 0) {
@@ -383,8 +383,8 @@ const BioPick = ({
             }}
            
          >
-            Add Tag
-          </button> */}
+            Add
+          </button>
           </div>
         </label>
         <div className="flex flex-wrap  mt-2 w-fullv gap-2">

@@ -12,7 +12,7 @@ import mail from "@/assets/svg/platformIcons/mail.svg";
 import React from "react";
 
 //component
-import LinkBtn, { AddMore } from "@/components/LinkBtn";
+import LinkBtn, { AddMore, socialIcons } from "@/components/LinkBtn";
 import { Requests } from "../../Requests";
 
 import axios from "axios";
@@ -202,6 +202,7 @@ export default function Main() {
             name={"Verify your work email"}
             isVerified={false}
             timestamp={false}
+            type={"email"}
           />
         )}
 
@@ -230,23 +231,10 @@ export default function Main() {
           }
         }}
       >
-        <span className="flex gap-3 ">
-          <svg
-            className="mt-[1px]"
-            xmlns="http://www.w3.org/2000/svg"
-            width="25"
-            height="24"
-            fill="none"
-            viewBox="0 0 25 24"
-          >
-            <path
-              stroke="#000"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M2.5 7l8.165 5.715c.661.463.992.695 1.351.784a2 2 0 00.968 0c.36-.09.69-.32 1.351-.784L22.5 7M7.3 20h10.4c1.68 0 2.52 0 3.162-.327a3 3 0 001.311-1.311c.327-.642.327-1.482.327-3.162V8.8c0-1.68 0-2.52-.327-3.162a3 3 0 00-1.311-1.311C20.22 4 19.38 4 17.7 4H7.3c-1.68 0-2.52 0-3.162.327a3 3 0 00-1.311 1.311C2.5 6.28 2.5 7.12 2.5 8.8v6.4c0 1.68 0 2.52.327 3.162a3 3 0 001.311 1.311C4.78 20 5.62 20 7.3 20z"
-            ></path>
-          </svg>
+        <span className="flex gap-2">
+        <img
+            className="w-6 h-6 object-contain"
+            src={socialIcons[data?.type as keyof typeof socialIcons] || socialIcons["web"]} alt="" />
           <h1 className="flex items-center text-[18px] font-semibold">
             {data?.name}
           </h1>
