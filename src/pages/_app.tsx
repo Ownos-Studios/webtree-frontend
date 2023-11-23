@@ -13,6 +13,8 @@ import WagmiProvider from "@/lib/wagmiProvider";
 //   }),
 // );
 
+
+
 export const BE_URL = "https://reclaim-test.onrender.com/";
 
 export default function App({ Component, pageProps }: AppProps) {

@@ -14,6 +14,7 @@ interface profileType {
   tags: string[];
   pfp: string | boolean;
   edit: boolean;
+  lens: string;
 }
 
 function Profile({
@@ -24,6 +25,7 @@ function Profile({
   tags,
   pfp = false,
   edit = false,
+  lens,
 }: profileType) {
   const router = useRouter();
   const [modal, setModal] = React.useState(false);
@@ -59,6 +61,17 @@ function Profile({
         {/* username */}
         <p className="mt-4 flex justify-center items-center w-min text-[20px]  max-[512px]:text-[14px] px-3 py-[6px] font-semibold rounded-[235px] text-[#6E0BAB] bg-[#FFFFFF80]">
           @{username}
+          {lens.length > 0 ? (
+            <span className="flex items-center gap-2 ml-2">
+              |
+              
+              <span className="max-[512px]:text-[12px]">
+               @{lens}
+              </span>
+            </span>
+          ) : (
+            ""
+          )}
         </p>
         {/* bio */}
         <span className="flex gap-2 mt-[20px]  max-[512px]:mt-[18px]">

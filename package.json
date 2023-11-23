@@ -21,7 +21,7 @@
     "@web3auth/web3auth-wagmi-connector": "^5.0.1",
     "axios": "^1.5.1",
     "connectkit": "^1.5.3",
-    "ethers": "^6.8.0",
+    "ethers": "^5.7.2",
     "next": "13.5.4",
     "react": "^18",
     "react-dom": "^18",

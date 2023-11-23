@@ -24,6 +24,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Modal from "@/components/modal";
 import { fetchSpotifyUsername } from "@/lib/spotifyUser";
+import { FetchAllLensHandle } from "@/lib/fetchLensHandle";
 
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
@@ -31,11 +32,13 @@ const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 export default function Main() {
   const { token, wallet, setUserInfo: localStore } = useUserStore();
   const { address } = useAccount();
+
   const [userInfo, setUserInfo] = useState<any>({
     userData: false,
     proofs: [],
   });
   const [modal, setModal] = useState(false);
+  const [lensHandle, setLensHandle] = useState<any>([]);
   const parseProofs = (proofs: any) => {
     switch (proofs?.type) {
       case "google-login":
@@ -126,6 +129,15 @@ export default function Main() {
         ...response?.data?.data?.user,
         pfp: response?.data?.data?.user?.pfp || false,
       });
+      const lensData = await FetchAllLensHandle(address as string);
+     
+      let handles: string[] = [];
+      lensData?.data?.profiles?.items?.forEach((item: any) => {
+        handles.push(item?.handle?.fullHandle);
+      });
+      setLensHandle(handles);
+
+
     } catch (error:any) {
       console.error(error); // Use console.error to log errors
       if(error?.response?.status === 401){
@@ -167,6 +179,8 @@ export default function Main() {
     return () => clearInterval(interval);
 
   }, [fetchUserInfo, token]);
+
+
 
   const Links = () => {
     const emailProofs = userInfo?.proofs?.filter((proof: any) => {
@@ -293,6 +307,7 @@ export default function Main() {
               tags={userInfo?.userData?.tags || undefined}
               pfp={userInfo?.userData?.pfp || false}
               edit={true}
+              lens={lensHandle?.length > 0 ? lensHandle[0] : ""}
             />
             <span className="flex left-0 right-0 fixed w-[1048px]  max-[512px]:px-2 max-[1070px]:w-full max-[1070px]:max-w-[500px] mx-auto bottom-0 ">
               {/* {userInfo?.proofs?.length > 0 &&

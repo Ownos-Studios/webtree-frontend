@@ -19,7 +19,7 @@ import useStore from "@/store/useStore";
 import Profile from "@/components/profile";
 import { fetchSpotifyUsername } from "@/lib/spotifyUser";
 import { socialIcons } from "@/components/LinkBtn";
-
+import { FetchAllLensHandle } from "@/lib/fetchLensHandle";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -35,6 +35,7 @@ export default function Home() {
   const { address } = useAccount()
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>("")
+  
  const [userInfo, setUserInfo] = useState<any>({
   userData: {
     username: false,
@@ -50,6 +51,7 @@ export default function Home() {
     company: false
   },
  });
+ const [lensHandle, setLensHandle] = useState<any>([]);
 
  useEffect(() => {
     if(router.isReady){
@@ -143,6 +145,13 @@ export default function Home() {
         userData: response?.data?.data?.user,
         proofs: dataCheck,
       })      
+      const lensData = await FetchAllLensHandle(address as string);
+     
+      let handles: string[] = [];
+      lensData?.data?.profiles?.items?.forEach((item: any) => {
+        handles.push(item?.handle?.fullHandle);
+      });
+      setLensHandle(handles);
     }
     catch(error){
       setError("User not found");
@@ -278,6 +287,7 @@ export default function Home() {
                   tags={userInfo?.userData?.tags?.length > 0 ? userInfo?.userData?.tags : undefined}
                   pfp={userInfo?.userData?.pfp || "/user.png"}
                   edit={false}
+                  lens={lensHandle?.length > 0 ? lensHandle[0] : ""}
                 />
                   
                 {/* <Requests /> */}

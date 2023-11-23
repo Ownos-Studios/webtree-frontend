@@ -12,8 +12,7 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
-      </body>
-      <Script
+        <Script
         src="https://accounts.google.com/gsi/client"
         strategy="lazyOnload"
       />
@@ -29,6 +28,8 @@ export default function Document() {
               gtag('config', 'G-RSBV84JS2B');
             `}
       </Script>
+      </body>
+     
 
     </Html>
   )
