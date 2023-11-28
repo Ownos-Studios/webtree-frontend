@@ -27,6 +27,7 @@ function ProfilePage() {
             pfp={"/user.png"}
             edit={false}
             lens={""}
+            wallet={""}
           />
           {/* <Requests /> */}
         </div>

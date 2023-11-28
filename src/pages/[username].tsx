@@ -288,6 +288,7 @@ export default function Home() {
                   pfp={userInfo?.userData?.pfp || "/user.png"}
                   edit={false}
                   lens={lensHandle?.length > 0 ? lensHandle[0] : ""}
+                  wallet={userInfo?.userData?.wallet || ""}
                 />
                   
                 {/* <Requests /> */}

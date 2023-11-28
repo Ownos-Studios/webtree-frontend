@@ -1,11 +1,11 @@
 import EditIcon from "@/assets/edit";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import PFPModal from "../modal/pfpModal";
 import useStore from "@/store/useStore";
 import { useUserStore } from "@/store/user";
 import { useAccount } from "wagmi";
-
+import { providers } from "ethers"
 interface profileType {
   name: string;
   username: string;
@@ -15,6 +15,7 @@ interface profileType {
   pfp: string | boolean;
   edit: boolean;
   lens: string;
+  wallet: string;
 }
 
 function Profile({
@@ -26,10 +27,26 @@ function Profile({
   pfp = false,
   edit = false,
   lens,
+  wallet,
 }: profileType) {
   const router = useRouter();
   const [modal, setModal] = React.useState(false);
   const token = useStore(useUserStore, (state) => state.token);
+  const [Ens, setEns] = React.useState("");
+  const ens = async() => {
+    const provider = new providers.JsonRpcProvider("https://eth.llamarpc.com");
+    const ens = await provider.lookupAddress(wallet);
+    setEns(ens || "");
+    return ens;
+  } 
+  useEffect(() => {
+    if(wallet){
+      ens().then((ens) => {
+        console.log(ens);
+      })
+    }
+  }, [wallet])
+  
   return (
     <div className="flex w-full h-max">
       <div className="relative flex flex-col rounded-[23.5px] p-[14.7px] w-[500px]  max-[512px]:w-[95vw] bg-[#D6E0EA]">
@@ -66,7 +83,18 @@ function Profile({
               |
               
               <span className="max-[512px]:text-[12px]">
-               @{lens}
+               @{lens} 
+              </span>
+            </span>
+          ) : (
+            ""
+          )}
+          {Ens.length > 0 ? (
+            <span className="flex items-center gap-2 ml-2">
+              |
+              
+              <span className="max-[512px]:text-[12px]">
+               @{Ens} 
               </span>
             </span>
           ) : (
