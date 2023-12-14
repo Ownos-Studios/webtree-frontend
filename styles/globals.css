@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.db-border {
+  border-radius: 60px;
+  border: 2px solid var(--greygrey, #181818);
+  background: var(--Steel-grey, #d6e0ea);
+  box-shadow:
+    0px 0px 0px 4px #fff inset,
+    0px 4px 0px 0px #000;
+}
+
+.add-more {
+  border-radius: 60px;
+  border: 2px solid var(--greygrey, #181818);
+  background: #e4ead6;
+  box-shadow:
+    0px 0px 0px 4px #fff inset,
+    0px 4px 0px 0px #000;
+}
+
+.black-btn {
+  border-radius: 60px;
+  border: 2px solid var(--White, #fff);
+  background: var(--greygrey, #181818);
+  box-shadow: 0px 4px 0px 0px #000;
+}
+
+.blue-btn {
+  border-radius: 60px;
+  border: 2px solid var(--White, #fff);
+  background: var(--greygrey, #006CFF);
+  box-shadow: 0px 4px 0px 0px #006CFF;
+}
+
+.border-btn {
+  border-radius: 60px;
+  border: 2px solid #181818;
+  box-shadow:
+    0px 0px 0px 4px #fff inset,
+    0px 4px 0px 0px #000;
+  cursor: pointer;
+}
