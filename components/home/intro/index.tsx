@@ -45,7 +45,7 @@ const Intro = ({}) => {
             Get Started
           </button>
           <p className="text-[#A5BCB0] py-4">
-            Built by Bob the Builder.
+            Built by OWNOS. Remember the Name.
           </p>
         </div>
       </span>
