@@ -25,7 +25,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Modal from "@/components/modal";
 import { fetchSpotifyUsername } from "@/lib/spotifyUser";
 import { FetchAllLensHandle } from "@/lib/fetchLensHandle";
-
+import { ReclaimClient } from '@reclaimprotocol/js-sdk'
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
@@ -39,6 +39,7 @@ export default function Main() {
   });
   const [modal, setModal] = useState(false);
   const [lensHandle, setLensHandle] = useState<any>([]);
+  const [reclaimURL, setReclaimURL] = useState<any>("")
   const parseProofs = (proofs: any) => {
     switch (proofs?.type) {
       case "google-login":
@@ -70,7 +71,17 @@ export default function Main() {
           isVerified: proofs?.isVerified,
           reVerifyRequest: proofs?.reVerifyRequest,
         };
-
+      case "steam": 
+        return {
+          id: proofs?._id,
+          type: "steam",
+          company: "steam",
+          name: 76561198886166562,
+          email: false,
+          timestamp: proofs?.updatedAt,
+          isVerified: proofs?.isVerified,
+          reVerifyRequest: proofs?.reVerifyRequest,
+        };
       default:
         return null;
     }
@@ -146,6 +157,57 @@ export default function Main() {
       }
     }
   };
+
+  const getVerificationReq = async () => {
+    const APP_ID = "0xf3DefDAF5aD39bD823033d63087C1E29690f2d09";
+    const APP_SECRET ="0xf349baf4f4ebe4261dd532769018375403febbcfa9539511695787f979102264" // do not store on frontend in production
+    const reclaimClient = new ReclaimClient(APP_ID);
+    const providers = [
+    '1bba104c-f7e3-4b58-8b42-f8c0346cdeab', // Steam ID
+    ];
+    const providerV2 = await reclaimClient.buildHttpProviderV2ByID(providers);
+    const requestProofs = reclaimClient.buildRequestedProofs(providerV2, reclaimClient.getAppCallbackUrl());
+    reclaimClient.setSignature(await reclaimClient.getSignature(requestProofs,APP_SECRET))
+    const reclaimReq = await reclaimClient.createVerificationRequest(providers);
+    console.log('req', reclaimReq.template);
+    
+    const url = await reclaimReq.start();
+    if (url) {
+      window?.innerWidth > 768
+        ? window.open(
+            window.location + "/user/qr?code=" + url,
+            "_blank"
+          )
+        : navigator.userAgent.match(/(iPod|iPhone|iPad)/)
+        ? window.open(url, "_top")
+        : window.open(url, "_blank");
+    }
+    await setReclaimURL(url)
+    reclaimReq.on('success', async(data) => {
+      if (data) {
+        const proofs = data;
+        const update = await axios.post(
+          `${BE_URL}reclaim/store`,
+          {
+            proof: proofs,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(update);
+      }
+    });
+    reclaimReq.on('error', (data) => {
+      if (data) {
+        const proofs = data;
+        // TODO: update business logic based on proof generation failure
+      }
+    });
+  };
+  
 
   const GetVerificationLink = async (type: string) => {
     try {
@@ -423,6 +485,17 @@ export default function Main() {
                   }}
                 />
               )}
+              {
+                <LinkBtn 
+                  platform={"steam"}
+                  link={async () => {
+                    setReclaimURL("")
+                    const url = await getVerificationReq();
+                    console.log(url)
+                  
+                  }}
+                />
+              }
             </>
           }
         />

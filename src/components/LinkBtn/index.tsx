@@ -23,7 +23,8 @@ type platformType =
   | "linkedin"
   | "youtube"
   | "instagram"
-  | "spotify";
+  | "spotify"
+  | "steam";
 
 export const socialIcons = {
   twitter: twitter.src,
@@ -38,6 +39,7 @@ export const socialIcons = {
   instagram: instagram.src,
   spotify: spotify.src,
   email: mail.src,
+  steam: "https://www.svgrepo.com/show/314707/steam.svg",
 };
 
 function LinkBtn({
