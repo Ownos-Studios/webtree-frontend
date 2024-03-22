@@ -159,8 +159,8 @@ export default function Main() {
   };
 
   const getVerificationReq = async () => {
-    const APP_ID = "0xf3DefDAF5aD39bD823033d63087C1E29690f2d09";
-    const APP_SECRET ="0xf349baf4f4ebe4261dd532769018375403febbcfa9539511695787f979102264" // do not store on frontend in production
+    const APP_ID = "0x973cf031097945eDB4d8f6DBd120D88ac719d5E8";
+    const APP_SECRET ="0x9a1ba69dc416be1e238f66fe974ccab5ad97b0a6a999acb193504505edce3a4f" // do not store on frontend in production
     const reclaimClient = new ReclaimClient(APP_ID);
     const providers = [
     '1bba104c-f7e3-4b58-8b42-f8c0346cdeab', // Steam ID
