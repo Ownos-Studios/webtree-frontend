@@ -25,7 +25,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Modal from "@/components/modal";
 import { fetchSpotifyUsername } from "@/lib/spotifyUser";
 import { FetchAllLensHandle } from "@/lib/fetchLensHandle";
-import { ReclaimClient } from '@reclaimprotocol/js-sdk'
+import { Reclaim } from '@reclaimprotocol/js-sdk'
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
@@ -159,33 +159,34 @@ export default function Main() {
   };
 
   const getVerificationReq = async () => {
-    const APP_ID = "0xf3DefDAF5aD39bD823033d63087C1E29690f2d09";
-    const APP_SECRET ="0xf349baf4f4ebe4261dd532769018375403febbcfa9539511695787f979102264" // do not store on frontend in production
-    const reclaimClient = new ReclaimClient(APP_ID);
+    const APP_ID = "0x973cf031097945eDB4d8f6DBd120D88ac719d5E8";
+    const APP_SECRET ="0x9a1ba69dc416be1e238f66fe974ccab5ad97b0a6a999acb193504505edce3a4f" // do not store on frontend in production
+    const reclaimClient = new Reclaim.ProofRequest(APP_ID);
     const providers = [
     '1bba104c-f7e3-4b58-8b42-f8c0346cdeab', // Steam ID
     ];
-    const providerV2 = await reclaimClient.buildHttpProviderV2ByID(providers);
-    const requestProofs = reclaimClient.buildRequestedProofs(providerV2, reclaimClient.getAppCallbackUrl());
-    reclaimClient.setSignature(await reclaimClient.getSignature(requestProofs,APP_SECRET))
-    const reclaimReq = await reclaimClient.createVerificationRequest(providers);
-    console.log('req', reclaimReq.template);
-    
-    const url = await reclaimReq.start();
-    if (url) {
+    await reclaimClient.buildProofRequest(providers[0])
+    reclaimClient.setSignature(
+        await reclaimClient.generateSignature(APP_SECRET)
+    )
+    const { requestUrl } =
+      await reclaimClient.createVerificationRequest()
+    if (requestUrl) {
       window?.innerWidth > 768
         ? window.open(
-            window.location + "/user/qr?code=" + url,
+            window.location + "/user/qr?code=" + requestUrl,
             "_blank"
           )
         : navigator.userAgent.match(/(iPod|iPhone|iPad)/)
-        ? window.open(url, "_top")
-        : window.open(url, "_blank");
+        ? window.open(requestUrl, "_top")
+        : window.open(requestUrl, "_blank");
     }
-    await setReclaimURL(url)
-    reclaimReq.on('success', async(data) => {
-      if (data) {
-        const proofs = data;
+    await setReclaimURL(requestUrl)
+
+    await reclaimClient.startSession({
+      onSuccessCallback: async(proof) => {
+        if(proof){
+          const proofs = proof;
         const update = await axios.post(
           `${BE_URL}reclaim/store`,
           {
@@ -198,12 +199,11 @@ export default function Main() {
           }
         );
         console.log(update);
-      }
-    });
-    reclaimReq.on('error', (data) => {
-      if (data) {
-        const proofs = data;
-        // TODO: update business logic based on proof generation failure
+        }
+      },
+      onFailureCallback: error => {
+        console.error('Verification failed', error)
+        // Your business logic here to handle the error
       }
     });
   };
