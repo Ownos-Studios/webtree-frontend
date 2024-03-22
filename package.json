@@ -14,7 +14,7 @@
     "@particle-network/auth": "^1.2.1",
     "@particle-network/rainbowkit-ext": "^1.2.0",
     "@rainbow-me/rainbowkit": "^1.1.2",
-    "@reclaimprotocol/js-sdk": "^0.0.23",
+    "@reclaimprotocol/js-sdk": "1.0.0",
     "@thirdweb-dev/react": "^4.0.7",
     "@thirdweb-dev/sdk": "^4.0.6",
     "@web3auth/modal": "^7.1.1",
