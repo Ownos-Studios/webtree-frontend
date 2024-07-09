@@ -148,7 +148,7 @@ export default function Home() {
     console.log(userInfo);
     return (
       <>
-        {userInfo.userData.email && userInfo.userData.telegram.length > 0 && (
+        {userInfo.userData.email && userInfo.userData.telegram.email > 0 && (
           <button className="flex flex-col db-border items-center justify-center h-[72px]  w-full">
             <span className="flex gap-2">
               <img
