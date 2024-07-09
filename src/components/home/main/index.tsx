@@ -10,6 +10,7 @@ import Hide from "@/assets/hide";
 import mail from "@/assets/svg/platformIcons/mail.svg";
 
 import React from "react";
+import { Suspense } from "react";
 
 //component
 import LinkBtn, { AddMore, socialIcons } from "@/components/LinkBtn";
@@ -25,9 +26,50 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Modal from "@/components/modal";
 import { fetchSpotifyUsername } from "@/lib/spotifyUser";
 import { FetchAllLensHandle } from "@/lib/fetchLensHandle";
-import { Reclaim } from '@reclaimprotocol/js-sdk'
+import { Reclaim } from "@reclaimprotocol/js-sdk";
 const inter = Inter({ subsets: ["latin"] });
+
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
+
+type Proof = {
+  identifier: string;
+  claimData: {
+    provider: string;
+    parameters: string;
+    owner: string;
+    timestampS: number;
+    context: string;
+    identifier: string;
+    epoch: number;
+  };
+  witnesses: {
+    id: string;
+    url: string;
+  }[];
+  signatures: string[];
+};
+
+type SessionData = {
+  _id: string;
+  wallet: string;
+  type: string;
+  sessionId: string;
+  proof: Proof;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
+
+type Organization = {
+  name: string;
+  id: string;
+  logo: string;
+};
+
+const fetchProviders = async (setter: (data: Organization[]) => void) => {
+  let res = await axios.get(`${process.env.BE_URL}reclaim/all`);
+  setter(res.data);
+};
 
 export default function Main() {
   const { token, wallet, setUserInfo: localStore } = useUserStore();
@@ -39,8 +81,10 @@ export default function Main() {
   });
   const [modal, setModal] = useState(false);
   const [lensHandle, setLensHandle] = useState<any>([]);
-  const [reclaimURL, setReclaimURL] = useState<any>("")
+  const [reclaimURL, setReclaimURL] = useState<any>("");
+
   const parseProofs = (proofs: any) => {
+    console.log(proofs);
     switch (proofs?.type) {
       case "google-login":
         const data = proofs?.isVerified
@@ -71,7 +115,7 @@ export default function Main() {
           isVerified: proofs?.isVerified,
           reVerifyRequest: proofs?.reVerifyRequest,
         };
-      case "steam": 
+      case "steam":
         return {
           id: proofs?._id,
           type: "steam",
@@ -87,6 +131,7 @@ export default function Main() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchUserInfo = async () => {
     try {
       const response = await axios.get(`${BE_URL}user/me`, {
@@ -102,119 +147,37 @@ export default function Main() {
         window.location.href = "/user/onboard";
       }
 
-      let dataCheck: any[] = []; // Initialize as an empty array
-      response?.data?.data?.proofs?.forEach((proof: any) => {
-        if (proof?.type !== "google-login") {
-          if (proof?.isVerified) {
-            const parsedProof = parseProofs(proof);
-            if (parsedProof) {
-              dataCheck.push(parsedProof);
-            }
-          }
-        } else {
-          const parsedProof = parseProofs(proof);
-          if (parsedProof) {
-            dataCheck.push(parsedProof);
-          }
-        }
-      });
-
-      let spotify = await dataCheck?.find((v: any) => v?.type === "spotify" && v?.isVerified);
-      if(spotify){
-        console.log(spotify)
-        const spotifyUsername = await fetchSpotifyUsername(spotify?.email)
-        if(spotifyUsername){
-          spotify = {
-            ...spotify,
-            name: spotifyUsername,
-          }
-          dataCheck = dataCheck?.map((v: any) => v?.type === "spotify" ? spotify : v)
-        }
-      }
-
       setUserInfo({
         userData: response?.data?.data?.user,
-        proofs: dataCheck,
+        proofs: response.data.data.proofs,
       });
       localStore({
         ...response?.data?.data?.user,
         pfp: response?.data?.data?.user?.pfp || false,
       });
       const lensData = await FetchAllLensHandle(address as string);
-     
+
       let handles: string[] = [];
       lensData?.data?.profiles?.items?.forEach((item: any) => {
         handles.push(item?.handle?.fullHandle);
       });
       setLensHandle(handles);
-
-
-    } catch (error:any) {
+    } catch (error: any) {
       console.error(error); // Use console.error to log errors
-      if(error?.response?.status === 401){
+      if (error?.response?.status === 401) {
         window.localStorage.clear();
         window.location.href = "/";
       }
     }
   };
 
-  const getVerificationReq = async () => {
-    const APP_ID = "0x973cf031097945eDB4d8f6DBd120D88ac719d5E8";
-    const APP_SECRET ="0x9a1ba69dc416be1e238f66fe974ccab5ad97b0a6a999acb193504505edce3a4f" // do not store on frontend in production
-    const reclaimClient = new Reclaim.ProofRequest(APP_ID);
-    const providers = [
-    '1bba104c-f7e3-4b58-8b42-f8c0346cdeab', // Steam ID
-    ];
-    await reclaimClient.buildProofRequest(providers[0])
-    reclaimClient.setSignature(
-        await reclaimClient.generateSignature(APP_SECRET)
-    )
-    const { requestUrl } =
-      await reclaimClient.createVerificationRequest()
-    if (requestUrl) {
-      window?.innerWidth > 768
-        ? window.open(
-            window.location + "/user/qr?code=" + requestUrl,
-            "_blank"
-          )
-        : navigator.userAgent.match(/(iPod|iPhone|iPad)/)
-        ? window.open(requestUrl, "_top")
-        : window.open(requestUrl, "_blank");
-    }
-    await setReclaimURL(requestUrl)
-
-    await reclaimClient.startSession({
-      onSuccessCallback: async(proof) => {
-        if(proof){
-          const proofs = proof;
-        const update = await axios.post(
-          `${BE_URL}reclaim/store`,
-          {
-            proof: proofs,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log(update);
-        }
-      },
-      onFailureCallback: error => {
-        console.error('Verification failed', error)
-        // Your business logic here to handle the error
-      }
-    });
-  };
-  
-
-  const GetVerificationLink = async (type: string) => {
+  const GetVerificationLink = async (type: string, wallet: string) => {
     try {
       const response = await axios.post(
-        `${BE_URL}reclaim/request`,
+        `${BE_URL}reclaim/request?type=${type}&wallet=${wallet}`,
         {
           type: type,
+          wallet: wallet,
         },
         {
           headers: {
@@ -222,7 +185,7 @@ export default function Main() {
           },
         }
       );
-      return response?.data?.data?.redirectURL;
+      return response?.data.requestUrl;
     } catch (error) {
       console.log(error);
     }
@@ -234,94 +197,83 @@ export default function Main() {
   }, [token]);
 
   useEffect(() => {
-    
     const interval = setInterval(() => {
       fetchUserInfo();
     }, 5000);
     return () => clearInterval(interval);
-
   }, [fetchUserInfo, token]);
 
-
-
   const Links = () => {
-    const emailProofs = userInfo?.proofs?.filter((proof: any) => {
-      return (
-        proof?.type === "email" &&
-        typeof proof?.email === "string" &&
-        !proof?.email.includes("gmail")
-      );
-    });
-    const emailProofsLength = emailProofs?.length || 0;
-
+    console.log(userInfo);
     return (
       <>
-        {userInfo?.proofs
-          ?.filter((v: any) => v?.isVerified)
-          ?.map((proof: any) => {
-            return (
-              <Link
-                key={proof?.company || false}
-                type={proof?.type || false}
-                name={proof?.name || false}
-                email={proof?.email || false}
-                isVerified={proof?.isVerified || false}
-                timestamp={proof?.timestamp || false}
+        {userInfo.userData.email && userInfo.userData.telegram.length > 0 && (
+          <button className="flex flex-col db-border items-center justify-center h-[72px]  w-full">
+            <span className="flex gap-2">
+              <img
+                className="w-6 h-6 object-contain"
+                src={socialIcons["email"]}
+                alt=""
               />
-            );
-          })}
-
-        {emailProofsLength > 0 ? (
-          ""
-        ) : (
-          <Link
-            name={"Verify your work email"}
-            isVerified={false}
-            timestamp={false}
-            type={"email"}
-          />
+              <h1 className="flex items-center text-[18px] font-semibold capitalize">
+                Email | {userInfo.userData.email}
+              </h1>
+            </span>
+          </button>
         )}
+        {userInfo.userData.telegram &&
+          userInfo.userData.telegram.length > 0 && (
+            <button className="flex flex-col db-border items-center justify-center h-[72px]  w-full">
+              <span className="flex gap-2">
+                <img
+                  className="w-6 h-6 object-contain"
+                  src={socialIcons["telegram"]}
+                  alt=""
+                />
+                <h1 className="flex items-center text-[18px] font-semibold capitalize">
+                  Telegram | {userInfo.userData.telegram}
+                </h1>
+              </span>
+            </button>
+          )}
+        {userInfo?.proofs?.map((proof: any, id: number) => {
+          return <Link key={"proof" + id} data={proof} />;
+        })}
 
         {/* <Link /> */}
       </>
     );
   };
 
-  const Link = (data: any) => {
-    return (
-      <button
-        className="flex flex-col db-border items-center justify-center h-[72px]  w-full"
-        onClick={async () => {
-          const url = data?.isVerified
-            ? false
-            : await GetVerificationLink("google-login");
+  const Link = ({ data }: { data: SessionData }) => {
+    let proof = data?.proof?.claimData?.parameters || null;
 
-          if (url) {
-            window?.innerWidth > 768
-              ? window.open(window.location + "/user/qr?code=" + url, "_blank")
-              : navigator.userAgent.match(/(iPod|iPhone|iPad)/)
-              ? window.open(url, "_top")
-              : window.open(url, "_blank");
-          } else {
-            if(data?.type === "spotify"){
-              window.open(`https://open.spotify.com/user/${data?.email}`, "_top")
-            } else{
-            toast.success("You are already verified");
-            }
-          }
-        }}
-      >
+    if (proof) {
+      proof = JSON.parse(proof);
+    }
+    console.log(proof);
+
+    return (
+      <button className="flex flex-col db-border items-center justify-center h-[72px]  w-full">
         <span className="flex gap-2">
-        <img
+          <img
             className="w-6 h-6 object-contain"
-            src={socialIcons[data?.type as keyof typeof socialIcons] || socialIcons["web"]} alt="" />
-          <h1 className="flex items-center text-[18px] font-semibold">
-            {data?.name}
+            src={
+              providers.find((ele) => ele.name == data.type)?.logo ||
+              socialIcons["web"]
+            }
+            alt=""
+          />
+          <h1 className="flex items-center text-[18px] font-semibold capitalize">
+            {providers.find((ele) => ele.name == data.type)?.name}{" "}
+            {proof &&
+              (proof as any).paramValues &&
+              "| " + Object.values((proof as any).paramValues)[0]}
           </h1>
         </span>
-        {data?.isVerified ? (
+        {data?.updatedAt ? (
           <p className="text-[#18181880] text-[10px]">
-            Verified on {new Date(data?.timestamp).toLocaleDateString()}
+            Verified on {new Date(data?.updatedAt).toLocaleDateString()}
           </p>
         ) : (
           ""
@@ -329,6 +281,16 @@ export default function Main() {
       </button>
     );
   };
+
+  const [providers, setproviders] = useState<Organization[]>([]);
+
+  useEffect(() => {
+    fetchProviders((data) => {
+      setproviders(data);
+    });
+  }, []);
+
+  console.log(providers);
 
   const spotifyProof = userInfo?.proofs?.filter((proof: any) => {
     return proof?.type === "spotify" && proof?.isVerified;
@@ -351,8 +313,9 @@ export default function Main() {
           <div className="flex">
             <Profile
               name={
-                userInfo?.userData?.firstName + " " + userInfo?.userData?.lastName ||
-                ""
+                userInfo?.userData?.firstName +
+                  " " +
+                  userInfo?.userData?.lastName || ""
               }
               company={
                 (userInfo?.proofs?.length > 0 &&
@@ -379,22 +342,31 @@ export default function Main() {
                   <Requests data={proof} key={proof} />
                 ))} */}
               <Requests
-              data={userInfo?.proofs?.filter((proof: any) => proof?.isVerified && proof?.reVerifyRequest?.length > 0 && proof?.reVerifyRequest?.filter((req: any) => req?.status === "pending"))} key={userInfo?.proofs?.filter((proof: any) => proof?.isVerified)}
+                data={userInfo?.proofs?.filter(
+                  (proof: any) =>
+                    proof?.isVerified &&
+                    proof?.reVerifyRequest?.length > 0 &&
+                    proof?.reVerifyRequest?.filter(
+                      (req: any) => req?.status === "pending"
+                    )
+                )}
+                key={userInfo?.proofs?.filter(
+                  (proof: any) => proof?.isVerified
+                )}
               />
             </span>
           </div>
 
           <div className="flex flex-col w-[500px] max-[512px]:border-t-[1.5px] pt-4 pb-2 border-black  max-[512px]:w-[95vw]">
             <span className="flex w-full justify-between">
-              <h1 className="font-medium text-[24px]">My Links   
-              </h1>
-              
-              
+              <h1 className="font-medium text-[24px]">My Links</h1>
+
               <span className="flex gap-4">
-              {userInfo?.proofs && userInfo?.proofs?.length > 0 && (
-                   userInfo?.proofs?.filter((proof: any) => proof?.isVerified).length)
-                }     
-                
+                {userInfo?.proofs &&
+                  userInfo?.proofs?.length > 0 &&
+                  userInfo?.proofs?.filter((proof: any) => proof?.isVerified)
+                    .length}
+
                 <p
                   onClick={() => {
                     toast.success("Link copied to clipboard");
@@ -443,59 +415,35 @@ export default function Main() {
           providers={[spotifyProofCheck + instagramProofCheck]}
           links={
             <>
-              {!spotifyProofCheck && (
-                <LinkBtn
-                  platform={"spotify"}
-                  link={async () => {
-                    const url = await GetVerificationLink("spotify-username");
-
-                    if (url) {
-                      window?.innerWidth > 768
-                        ? window.open(
-                            window.location + "/user/qr?code=" + url,
-                            "_blank"
-                          )
-                        : navigator.userAgent.match(/(iPod|iPhone|iPad)/)
-                        ? window.open(url, "_top")
-                        : window.open(url, "_blank");
-                    } else {
-                      toast.success("You are already verified");
-                    }
-                  }}
-                />
-              )}{" "}
-              {!instagramProofCheck && (
-                <LinkBtn
-                  platform={"instagram"}
-                  link={async () => {
-                    const url = await GetVerificationLink("instagram-user");
-
-                    if (url) {
-                      window?.innerWidth > 768
-                        ? window.open(
-                            window.location + "/user/qr?code=" + url,
-                            "_blank"
-                          )
-                        : navigator.userAgent.match(/(iPod|iPhone|iPad)/)
-                        ? window.open(url, "_top")
-                        : window.open(url, "_blank");
-                    } else {
-                      toast.success("You are already verified");
-                    }
-                  }}
-                />
-              )}
-              {
-                <LinkBtn 
-                  platform={"steam"}
-                  link={async () => {
-                    setReclaimURL("")
-                    const url = await getVerificationReq();
-                    console.log(url)
-                  
-                  }}
-                />
-              }
+              {providers.map((pr) => {
+                return (
+                  <>
+                    <LinkBtn
+                      platform={pr.name}
+                      icon={pr.logo}
+                      link={async () => {
+                        const url = await GetVerificationLink(
+                          pr.name,
+                          address as string
+                        );
+                        console.log(url);
+                        if (url) {
+                          window?.innerWidth > 768
+                            ? window.open(
+                                window.location + "/user/qr?code=" + url,
+                                "_blank"
+                              )
+                            : navigator.userAgent.match(/(iPod|iPhone|iPad)/)
+                            ? window.open(url, "_top")
+                            : window.open(url, "_blank");
+                        } else {
+                          toast.success("You are already verified");
+                        }
+                      }}
+                    />
+                  </>
+                );
+              })}
             </>
           }
         />
@@ -505,7 +453,7 @@ export default function Main() {
 }
 
 const Nav = () => {
- const { disconnect } = useDisconnect();
+  const { disconnect } = useDisconnect();
 
   return (
     <span className="flex mt-[25px] w-[1048px]  max-[512px]:px-2 max-[1070px]:w-full max-[1070px]:max-w-[500px] mx-auto mb-[36px]">
@@ -533,7 +481,6 @@ const Nav = () => {
             window.localStorage.clear();
             // wait for one second
             setTimeout(() => {
-           
               window.location.href = "/";
             }, 1000);
           }}

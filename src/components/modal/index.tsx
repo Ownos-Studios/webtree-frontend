@@ -15,7 +15,7 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
       <div
         id="default-modal"
         aria-hidden="true"
-        className="fixed inset-0 z-50 flex w-full  bg-[#00000080] overflow-x-hidden overflow-y-auto outline-none focus:outline-none 
+        className="fixed inset-0 z-50 flex w-full h-screen  bg-[#00000080] overflow-x-hidden overflow-y-hidden outline-none focus:outline-none 
         backdrop-blur
         "
       >
@@ -24,12 +24,12 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
         mx-auto my-auto h-[90%]
            px-8 max-[512px]:px-4 py-2 rounded-[25px] border-black border-[2px]
         items-center justify-center
-        bg-white 
+        bg-white  overflow-y-scroll
     "
         >
           <span className="flex w-full justify-between py-8">
             <h1 className="text-[24px] font-medium max-[512px]:text-[18px]">
-              Available Providers 
+              Available Providers
             </h1>
 
             <p
@@ -42,7 +42,10 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
               Back
             </p>
           </span>
-          {links}
+          <div className="flex flex-col h-full w-full overflow-y-auto">
+            {links}
+          </div>
+
           {providers?.length > 0 && (
             <h1
               className="text-md  font-bold
@@ -50,8 +53,7 @@ const Modal: React.FC<indexProps> = ({ state, setState, providers, links }) => {
             text-black
             "
             >
-              
-             More Data Providers Coming Soon
+              More Data Providers Coming Soon
             </h1>
           )}
           {providers?.length === 0 && (

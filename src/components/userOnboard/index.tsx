@@ -41,19 +41,16 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
   let update = false;
 
   useEffect(() => {
-    if(!update){
-    setBio({
-      bio: userInfo?.bio || "",
-      tags: userInfo?.tags || [],
-      newTag: "",
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    update = true;
-  }
+    if (!update) {
+      setBio({
+        bio: userInfo?.bio || "",
+        tags: userInfo?.tags || [],
+        newTag: "",
+      });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      update = true;
+    }
   }, [userInfo]);
-  
-
- 
 
   useEffect(() => {
     if (token?.length < 1) {
@@ -69,13 +66,14 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
   }, [nameExists, router, token?.length, usernameExists]);
 
   const updateUserBio = async () => {
-    console.log("updating user bio",bio);
+    console.log("updating user bio", bio);
     try {
       const res = await axios.post(
         `${BE_URL}user/updateBio`,
         {
           bio: bio.bio || "",
           tags: bio.tags || [],
+          telegram: userInfo.telegram,
         },
         {
           headers: {
@@ -88,7 +86,6 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
         toast.success("user info updated");
         router.push("/");
       }
-      
     } catch (error) {
       console.log(error);
     }
@@ -260,7 +257,7 @@ const NamePick = ({
       <p className="text-center text-[16px] leading-6 mt-[12px] text-[#575A5C]">
         This username will be used as your shareable webtree link
       </p>
-      <span className="flex flex-col mt-[48px]">
+      <span className="flex flex-col mt-[18px]">
         <label htmlFor="">
           <h1 className="text-[20px]">first name</h1>
           <input
@@ -275,7 +272,7 @@ const NamePick = ({
           />
         </label>
 
-        <label className="mt-[18px]" htmlFor="">
+        <label className="mt-[12px]" htmlFor="">
           <h1 className="text-[20px]">last name</h1>
           <input
             className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
@@ -285,6 +282,20 @@ const NamePick = ({
             value={userState.lastName}
             onChange={(e) =>
               setUserState({ ...userState, lastName: e.target.value })
+            }
+          />
+        </label>
+
+        <label className="mt-[12px]" htmlFor="">
+          <h1 className="text-[20px]">email</h1>
+          <input
+            className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
+            type="email"
+            required
+            placeholder="Enter first name"
+            value={userState.email}
+            onChange={(e) =>
+              setUserState({ ...userState, email: e.target.value })
             }
           />
         </label>
@@ -322,22 +333,22 @@ const BioPick = ({
   bio: { bio: string; tags: string[]; newTag: string };
   setBio: React.Dispatch<React.SetStateAction<any>>;
 }) => {
-  const { setUserInfo, userInfo } = useUserStore();
+  const { setUserInfo, userInfo }: { setUserInfo: any; userInfo: any } =
+    useUserStore();
+
   const router = useRouter();
   return (
     <div className="flex flex-col w-[340px] items-center">
-      <h1 className={"text-[48px] font-bold text-center"}>
-        Add More to your profile
-      </h1>
+      <h1 className={"text-[48px] font-bold text-center"}>More Details</h1>
       <p className="text-center text-[16px] leading-6 mt-[12px] text-[#575A5C]">
         Update your Profile section with your information
       </p>
-      <span className="flex flex-col mt-[48px]">
+      <span className="flex flex-col mt-[4px]">
         <label htmlFor="">
           <p className="text-[14px] text-[#575A5C]">
-           Tell us what you do with Tags (max 4)
+            Tell us what you do with Tags (max 4)
           </p>
-          <div className="flex flex-row  mt-2  gap-2">
+          <div className="flex flex-row  mt-2  gap-1">
             <input
               className="rounded-[12px] bg-[#D6E0EA] h-[48px]  px-[12px] w-full
             "
@@ -365,26 +376,25 @@ const BioPick = ({
               }}
             />
             <button
-          className="w-1/4 bg-black text-white rounded-[12px] h-[48px] text-[#575A5C]"
-            onClick={() => {
-              if (bio.newTag?.length > 0) {
-                if (bio.tags.length < 4) {
-                  setBio({
-                    ...bio,
-                    tags: [...bio.tags, bio.newTag],
-                    newTag: "",
-                  });
+              className="w-1/4 bg-black text-white rounded-[12px] h-[48px] text-[#575A5C]"
+              onClick={() => {
+                if (bio.newTag?.length > 0) {
+                  if (bio.tags.length < 4) {
+                    setBio({
+                      ...bio,
+                      tags: [...bio.tags, bio.newTag],
+                      newTag: "",
+                    });
+                  } else {
+                    toast.error("you can only add upto 4 tags");
+                  }
                 } else {
-                  toast.error("you can only add upto 4 tags");
+                  toast.error("please enter a tag");
                 }
-              } else {
-                toast.error("please enter a tag");
-              }
-            }}
-           
-         >
-            Add
-          </button>
+              }}
+            >
+              Add
+            </button>
           </div>
         </label>
         <div className="flex flex-wrap  mt-2 w-fullv gap-2">
@@ -406,12 +416,25 @@ const BioPick = ({
         <label htmlFor="">
           <p className="text-[14px] text-[#575A5C]">Describe Yourself!</p>
           <textarea
-            rows={3}
+            rows={2}
             className="rounded-[12px] bg-[#D6E0EA]  w-[340px] px-[12px]"
             placeholder="Enter your bio"
             required
             value={bio.bio}
             onChange={(e) => setBio({ ...bio, bio: e.target.value })}
+          />
+        </label>
+        <label className="" htmlFor="">
+          <p className="text-[14px] text-[#575A5C]">Telegram</p>
+          <input
+            className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
+            type="email"
+            required
+            placeholder="Enter Telegram id"
+            value={userInfo.telegram as string}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, telegram: e.target.value })
+            }
           />
         </label>
       </span>
@@ -430,8 +453,7 @@ const BioPick = ({
           if (bio.bio?.length > 140) {
             toast.error("bio must be less than 140 characters");
             return;
-          }
-          else {
+          } else {
             setUserInfo({
               ...userInfo,
               firstTimeLogin: false,

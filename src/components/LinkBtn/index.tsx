@@ -11,6 +11,7 @@ import linkedin from "./../../assets/svg/platformIcons/linkedin.svg";
 import youtube from "./../../assets/svg/platformIcons/youtube.svg";
 import instagram from "./../../assets/svg/platformIcons/instagram.svg";
 import spotify from "./../../assets/svg/platformIcons/spotify.svg";
+import telegram from "./../../assets/svg/platformIcons/telegram.svg";
 
 type platformType =
   | "twitter"
@@ -24,7 +25,8 @@ type platformType =
   | "youtube"
   | "instagram"
   | "spotify"
-  | "steam";
+  | "steam"
+  | "telegram";
 
 export const socialIcons = {
   twitter: twitter.src,
@@ -40,16 +42,19 @@ export const socialIcons = {
   spotify: spotify.src,
   email: mail.src,
   steam: "https://www.svgrepo.com/show/314707/steam.svg",
+  telegram: telegram.src,
 };
 
 function LinkBtn({
   platform,
   link,
   color = "#D6E0EA",
+  icon,
 }: {
-  platform: platformType;
+  platform: string;
   link: () => void;
   color?: string;
+  icon: string;
 }) {
   return (
     <div
@@ -59,13 +64,11 @@ function LinkBtn({
     >
       <span className="flex gap-3 items-center">
         <picture>
-          <img
-            className="w-6 h-6 object-contain"
-            src={socialIcons[platform]}
-            alt=""
-          />
+          <img className="w-6 h-6 object-contain" src={icon} alt="" />
         </picture>
-        <h3 className="text-[18px] font-semibold">{platform?.charAt(0)?.toLocaleUpperCase() + platform?.slice(1)}</h3>
+        <h3 className="text-[18px] font-semibold">
+          {platform?.charAt(0)?.toLocaleUpperCase() + platform?.slice(1)}
+        </h3>
       </span>
 
       {/* <p className="text-[10px] mt-1 text-[#18181880]">Verified on 12.09.23</p> */}

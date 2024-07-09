@@ -11,7 +11,12 @@ import { ConnectButton, useConnectModal, Wallet } from "@rainbow-me/rainbowkit";
 const inter = Inter({ subsets: ["latin"] });
 const grotesk = Familjen_Grotesk({ subsets: ["latin"] });
 
-import { useAccount, useConnect, useSignMessage, useSignTypedData } from "wagmi";
+import {
+  useAccount,
+  useConnect,
+  useSignMessage,
+  useSignTypedData,
+} from "wagmi";
 
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -19,9 +24,8 @@ import { useUserStore } from "@/store/user";
 import { BE_URL } from "@/pages/_app";
 import useStore from "@/store/useStore";
 import Loader from "@/components/modal/loader";
-import { Connector  } from 'wagmi/connectors'
+import { Connector } from "wagmi/connectors";
 import { disconnect } from "process";
-
 
 interface indexProps {}
 
@@ -37,10 +41,7 @@ const Login: React.FC<indexProps> = ({}) => {
   const [loader, setLoader] = useState<boolean>(false);
   const { address } = useAccount();
   const router = useRouter();
-  
-  
 
-  
   // useEffect(() => {
   //   if (address && token?.length > 0) {
   //     //@ts-ignore
@@ -54,13 +55,13 @@ const Login: React.FC<indexProps> = ({}) => {
     },
     onError: (error) => {
       setLoader(false);
-    }
+    },
   });
 
   const getNonce = async () => {
     try {
-      const response = await axios.get(`${BE_URL}auth/nonce`);
-      let message = `Click to Verify\n\nThis is a sign-in security verification for your Webtree account. This request does not trigger any transaction or cost any fees.\n\nClick to sign-in to Webtree.\n\nTechnical Data (ignore if not a power-user)\n\nWallet Address: ${address}\n\nNonce: ${response.data?.data?.nonce}`
+      const response = await axios.get(`${BE_URL}auth/nonce?wallet=${address}`);
+      let message = `Click to Verify\n\nThis is a sign-in security verification for your Webtree account. This request does not trigger any transaction or cost any fees.\n\nClick to sign-in to Webtree.\n\nTechnical Data (ignore if not a power-user)\n\nWallet Address: ${address}\n\nNonce: ${response.data?.data?.nonce}`;
       signMessage({ message: message });
       setLoader(true);
       // signer?.signMessage(response.data?.data?.nonce).then((data) => {
@@ -127,25 +128,20 @@ const Login: React.FC<indexProps> = ({}) => {
           Webtree
         </p>
 
-
         <span className="flex flex-col gap-y-4 text-[18px] font-semibold mt-[48px] max-[512px]:mt-auto mb-6">
-          
-
-          
-        
           {!address ? (
             <>
-            <button
-              onClick={() => {
-                openConnectModal && openConnectModal();
-              }}
-              className="cursor-pointer border-btn py-[22px]  max-w-[340px] w-[95vw] flex items-center justify-center gap-x-2"
-            >
-              <picture>
-                <img src={rainbowkit.src} alt="" />
-              </picture>
-               Login
-            </button>
+              <button
+                onClick={() => {
+                  openConnectModal && openConnectModal();
+                }}
+                className="cursor-pointer border-btn py-[22px]  max-w-[340px] w-[95vw] flex items-center justify-center gap-x-2"
+              >
+                <picture>
+                  <img src={rainbowkit.src} alt="" />
+                </picture>
+                Login
+              </button>
             </>
           ) : (
             <button
@@ -162,7 +158,7 @@ const Login: React.FC<indexProps> = ({}) => {
           )}
         </span>
       </div>
-      {loader && <Loader/>}
+      {loader && <Loader />}
     </section>
   );
 };
