@@ -177,7 +177,7 @@ export default function Home() {
               </span>
             </button>
           )}
-        {userInfo?.proofs?.map((proof: any, id: number) => {
+        {userInfo?.proofs.map((proof: any, id: number) => {
           return <Link key={"proof" + id} data={proof} />;
         })}
         {/* <Link /> */}
@@ -193,8 +193,38 @@ export default function Home() {
     }
     console.log(proof);
 
+    if (!proof) {
+      return null;
+    }
+
+    let provider = providers.find((ele) => ele.name == data.type)?.name;
+    let link = "";
+    let content = provider;
+    " " +
+      (proof &&
+        (proof as any).paramValues &&
+        "| " + Object.values((proof as any).paramValues)[0]);
+
+    if (provider == "twitter") {
+      let username = JSON.parse(data.proof.claimData.context)
+        .extractedParameters.username;
+      content = `@${username}`;
+      link = `https://x.com/${username}`;
+    }
+    if (provider == "github") {
+      let username = JSON.parse(data.proof.claimData.context)
+        .extractedParameters.userName;
+      content = `@${username}`;
+      link = `https://github.com/${username}`;
+    }
+
     return (
-      <button className="flex flex-col db-border items-center justify-center h-[72px]  w-full">
+      <button
+        onClick={() => {
+          link.length > 0 && window.open(link, "_blank");
+        }}
+        className="flex flex-col db-border items-center justify-center h-[72px]  w-full"
+      >
         <span className="flex gap-2">
           <img
             className="w-6 h-6 object-contain"
@@ -205,10 +235,7 @@ export default function Home() {
             alt=""
           />
           <h1 className="flex items-center text-[18px] font-semibold capitalize">
-            {providers.find((ele) => ele.name == data.type)?.name}{" "}
-            {proof &&
-              (proof as any).paramValues &&
-              "| " + Object.values((proof as any).paramValues)[0]}
+            {content}
           </h1>
         </span>
         {data?.updatedAt ? (

@@ -74,6 +74,7 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
           bio: bio.bio || "",
           tags: bio.tags || [],
           telegram: userInfo.telegram,
+          email: userInfo.email || "",
         },
         {
           headers: {
@@ -94,7 +95,7 @@ const UserOnBoard: React.FC<indexProps> = ({}) => {
     <>
       <Toaster position="top-right" />
       <section
-        className={`flex w-full h-screen justify-center items-center ${grotesk.className} leading-[48px]`}
+        className={`flex w-full h-min-screen justify-center items-center ${grotesk.className} leading-[48px]`}
       >
         {currentstep == steps.SET_NAME && <NamePick setstep={setstep} />}
         {currentstep == steps.SET_USERNAME && (
@@ -285,20 +286,6 @@ const NamePick = ({
             }
           />
         </label>
-
-        <label className="mt-[12px]" htmlFor="">
-          <h1 className="text-[20px]">email</h1>
-          <input
-            className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
-            type="email"
-            required
-            placeholder="Enter first name"
-            value={userState.email}
-            onChange={(e) =>
-              setUserState({ ...userState, email: e.target.value })
-            }
-          />
-        </label>
       </span>
       <button
         onClick={() => {
@@ -338,7 +325,7 @@ const BioPick = ({
 
   const router = useRouter();
   return (
-    <div className="flex flex-col w-[340px] items-center">
+    <div className="flex flex-col w-[340px] items-center h-max py-4 ">
       <h1 className={"text-[48px] font-bold text-center"}>More Details</h1>
       <p className="text-center text-[16px] leading-6 mt-[12px] text-[#575A5C]">
         Update your Profile section with your information
@@ -425,11 +412,23 @@ const BioPick = ({
           />
         </label>
         <label className="" htmlFor="">
-          <p className="text-[14px] text-[#575A5C]">Telegram</p>
+          <h1 className="text-[14px] text-[#575A5C]">email</h1>
           <input
             className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
             type="email"
             required
+            placeholder="Enter first name"
+            value={userInfo.email as string}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, email: e.target.value })
+            }
+          />
+        </label>
+        <label className="" htmlFor="">
+          <p className="text-[14px] text-[#575A5C]">Telegram</p>
+          <input
+            className="rounded-[12px] bg-[#D6E0EA] h-[48px] w-[340px] px-[12px]"
+            type="text"
             placeholder="Enter Telegram id"
             value={userInfo.telegram as string}
             onChange={(e) =>
