@@ -17,7 +17,7 @@ const QrCode: React.FC<QRCodeProps> = ({}) => {
   return (
     <>
       <h1 className="text-2xl text-center mt-12">
-        Please scan this QR using your mobile (reclaim app)
+        Please scan this QR using your mobile
       </h1>
       <div
         className="mx-auto
